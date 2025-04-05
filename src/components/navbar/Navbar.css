@@ -1,0 +1,11 @@
+.clickable {
+    cursor: pointer;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.active {
+    font-weight: bold;
+}
