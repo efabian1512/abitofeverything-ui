@@ -9,18 +9,23 @@ const Navbar = () => {
   const [isAUserRouteActive, setIsAUserRouteActive,] = useState<boolean>(false);
   const location = useLocation();
 
+  let userInfo: any = null;
+
+  if(localStorage.getItem('userInfo')){
+    userInfo = JSON.parse(localStorage.getItem('userInfo')!);
+  }
+
   useEffect(() => {
     setIsDropdownExpanded(false);
   }, []);
 
   useEffect(()=> {
     const userRoutes = ["/my/orders", "/admin/orders", "/admin/products"];
-    console.log(location.pathname);
     setIsAUserRouteActive(userRoutes.includes(location.pathname));
   }, [location]);
 
 
-    return  <nav className="navbar navbar-expand-md navbar-light fixed-top bg-light">
+    return  <nav className="navbar navbar-expand-md navbar-light sticky-top bg-light">
         <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">Home</NavLink>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,16 +36,16 @@ const Navbar = () => {
           <li className="nav-item">
               <NavLink onClick={() => setIsDropdownExpanded(false)} className="nav-link"  to="/shopping-cart">Shopping Cart</NavLink>
           </li>
-          <li className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
+         { userInfo && <li className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
             
-              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>Username</a>
+              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.email}</a>
               <div className={`dropdown-menu ${isDropdownExpanded ? ' show' :''}`}>
                   <Link className="dropdown-item clickable" to="/my/orders">My Orders</Link>
                   <Link className="dropdown-item clickable" to="/admin/orders">Manage Orders</Link>
                   <Link className="dropdown-item clickable" to="/admin/products">Manage Products</Link>
                   <a className="dropdown-item clickable">Log Out</a>
               </div>
-          </li>
+          </li> }
         </ul>
       </div>
     </div>

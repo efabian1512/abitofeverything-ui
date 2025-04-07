@@ -9,7 +9,7 @@ const Layout = () => {
       <Navbar/>
     </header>
     <main className="flex-shrink-0">
-      <div className="container">
+      <div className="container pt-3">
          <Outlet/>
       </div>
     </main>

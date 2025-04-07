@@ -1,0 +1,24 @@
+.register-container {
+    height: 100vh;
+    display: flex;
+    width: 100%;
+    color: #0F4C81;
+    background-color: #0F4C81;
+}
+
+
+form {
+    margin: auto;
+    max-width: 400px;
+    width: 100%;
+    /* border: 3px solid rgb(82, 82, 82); */
+    border-radius: 5px;
+    padding: 1rem;
+    background-color: #d8d8d8;
+}
+
+.create-button {
+    width: 10rem;
+    background-color: #0F4C81;
+    border-color: #0F4C81;
+}

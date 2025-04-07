@@ -1,13 +1,4 @@
-
-import axios from 'axios';
-
-const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5173',
-  
-  
-});
-
-
+import { axiosInstance } from "../../../services/AxiosInstance";
 
 export const saveProduct = (product: any) => {
     const formData = new FormData();
