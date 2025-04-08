@@ -10,3 +10,10 @@ export const saveUser = (user: any) => {
 export const login = (user: any) => {
     return axiosInstance.post('api/shop/authenticate', user);
 }
+
+export const userLogout = (token: string) => {
+    const formData = new FormData();
+
+    formData.append('accessToken', token);
+    return axiosInstance.post('api/shop/logout', formData);
+}
