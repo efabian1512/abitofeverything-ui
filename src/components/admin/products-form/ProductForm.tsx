@@ -7,37 +7,52 @@ import { useState } from 'react';
 import styles from './ProductForm.module.css';
 
 
-const schema = z.object({
-    title: z.string().min(1, {message: 'El nombre es requerido.'}),
-    price: z.number({invalid_type_error: 'Este campo es requerido'}),               
-   // productImage: z.string().min(1, {message: 'Se requiere una imagen.'}),
-    category: z.string().min(1, {message: 'Se requiere una categoria.'})
-});
-
-type FormData = z.infer<typeof schema>;
 
 const ProductForm = () => {
 
+
+
+const checkFileType = (file: File) => {
+    if(file?.name){
+        const fileType = file.name.split(".").pop();
+        if(fileType && ["png", "jpg", "jpeg"].includes(fileType?.toLowerCase())) return true;
+    }
+    return false;
+}
+
+const validateMaxFile = (file: File) => {
+    const MAX_FILE_SIZE = 3000000;
+
+    return file?.size < MAX_FILE_SIZE;
+}
+
+const schema = z.object({
+    title: z.string().min(1, {message: 'El nombre es requerido.'}),
+    price: z.number({invalid_type_error: 'Este campo es requerido'}),               
+    category: z.string().min(1, {message: 'Se requiere una categoria.'}),
+    productImage: z.any().refine((files) => files?.length === 1, 'Se require una imagen.')
+                        .refine((files) => validateMaxFile(files[0]), 'El Tamano maximo de imagen permitido es 3MB.')
+                        .refine((files) => checkFileType(files[0]), 'Solo se permiten los formatos .jpg y npg.')                 
+});
+
+type FormData = z.infer<typeof schema>;
 
     const { register, handleSubmit, formState: { errors }} = useForm<FormData>({resolver: zodResolver(schema) });
     const { categories } = useProductCategories();
     const [file, setFile] = useState<File | undefined>();
     
-    const date = Date.now();
-    console.log(date)
-
     const getCategory = (id: string) => {
         return categories?.find((category: any) => category.id === id);
     }
 
-    const handleProductImageOnChange = (event: React.FormEvent<HTMLInputElement>) => {
-        const target = event.target as HTMLInputElement & { files: FileList};
-        setFile(target.files[0]);
-    } 
+    // const handleProductImageOnChange = (event: React.FormEvent<HTMLInputElement>) => {
+    //     const target = event.target as HTMLInputElement & { files: FileList};
+    //     setFile(target.files[0]);
+    // } 
 
     const onSubmit = (data: FieldValues) => {
         const category = getCategory(data.category);
-        const formValue = {...data, productImage: file, category: category};
+        const formValue = {...data, productImage: data.productImage[0], category: category};
         saveProduct(formValue);
     }
     return (
@@ -68,13 +83,16 @@ const ProductForm = () => {
                     {categories?.map((category: any) => <option key={category.id} value={category.id} id={category.id}>{category.categoryName}</option> 
                     )}
                 </select>
-                {/* {errors.category && <div  className="alert alert-danger mt-2">
+                {errors.category && <div  className="alert alert-danger mt-2">
                     <div>{errors.category?.message}</div>
-                </div>} */}
+                </div>}
             </div>
               <div className="form-gropup mb-2">
                 <label htmlFor="productImage">Image</label>
-                <input name="productImage" type="file"  className="form-control" onChange={handleProductImageOnChange}/>
+                <input {...register('productImage')} type="file"  className="form-control" accept=".jpg, jpeg, .png"/>
+                 {errors.productImage && <div  className="alert alert-danger mt-2">
+                    <div>{errors?.productImage?.message}</div>
+                </div>}
             </div>
             <button className="mt-3 btn btn-primary contact-btn" type="submit">Enviar</button>
         </form>

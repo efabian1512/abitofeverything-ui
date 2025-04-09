@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { login } from '../../services/UserService';
 import Loading from '../Loading/Loading';
 import { z } from 'zod';
@@ -68,6 +68,9 @@ const [alertMessage, setAlertMessage] = useState<string>('');
   </div>
 
   <button className={`btn btn-primary me-3 ` + loginStyles['login-button']} type='submit'>Iniciar sesión</button>
+  <div className="mt-2">
+    <p> <span className="me-2">¿No tienes una cuenta?</span><Link className="text-decoration-none" to="/register">Registrate</Link></p>
+  </div>
 {isLoading && <Loading/>}
 <div className="mt-3">
   {alertMessage && <Alert message={alertMessage} />}
