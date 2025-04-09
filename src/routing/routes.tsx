@@ -14,6 +14,7 @@ import ConfirmationEmail from "../components/comfirmation-email/ConfirmationEmai
 import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoute";
 import AdminProtectedRoute from '../components/ProtectedRoutes/AdminProtectedRoute';
 import ProductForm from '../components/admin/products-form/ProductForm';
+import LoginRegisterProtectedRoute from '../components/ProtectedRoutes/LoginRegisterProtectedRoute';
 
 const router = createBrowserRouter([
     {path: '', element: <Layout/>, children: [
@@ -29,8 +30,8 @@ const router = createBrowserRouter([
     {path:'*', element: <Home/>}
     ]},
     {path:'*', element: <Layout/>, children:[{index: true, element: <Home/>}]},
-    {path: 'login', element: <Login/>},
-    {path: 'register', element: <Register/>},
+    {path: 'login', element: (<LoginRegisterProtectedRoute><Login/></LoginRegisterProtectedRoute>)},
+    {path: 'register', element: (<LoginRegisterProtectedRoute><Register/></LoginRegisterProtectedRoute>)},
     {path: 'confirmation-email', element: <ConfirmationEmail/>}
 ]);
 
