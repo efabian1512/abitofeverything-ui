@@ -8,8 +8,8 @@ const Layout = () => {
     <header>
       <Navbar/>
     </header>
-    <main className="flex-shrink-0">
-      <div className="container pt-3">
+    <main className="flex-shrink-0 h-100">
+      <div className="container pt-3 h-100">
          <Outlet/>
       </div>
     </main>

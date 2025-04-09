@@ -7,7 +7,7 @@
 }
 
 
-form {
+.register-container > form {
     margin: auto;
     max-width: 400px;
     width: 100%;
@@ -17,7 +17,7 @@ form {
     background-color: #d8d8d8;
 }
 
-.create-button {
+.register-container > .create-button {
     width: 10rem;
     background-color: #0F4C81;
     border-color: #0F4C81;

@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../../services/UserService';
 import Loading from '../Loading/Loading';
 import { z } from 'zod';
 import loginStyles from './Login.module.css';
+import Alert from '../alerts/Alert';
 
 const schema = z.object({
     username: z.string().min(1, {message: 'El email requerido.'}),
@@ -19,8 +20,11 @@ const Login = () => {
 const { register, handleSubmit, reset, formState: { errors }} = useForm<FormData>({resolver: zodResolver(schema) });
 
 const navigate  = useNavigate();
+const location = useLocation();
 
 const [isLoading, setIsloading] = useState<boolean>(false);
+
+const [alertMessage, setAlertMessage] = useState<string>('');
 
  const onSubmit = (data: FieldValues) => {
     
@@ -28,9 +32,17 @@ const [isLoading, setIsloading] = useState<boolean>(false);
       login(data).then((resp) => {
             setIsloading(false);
         if(resp.data) {
-            localStorage.setItem('userInfo', JSON.stringify(resp.data));
-            reset();
-            navigate('/');
+          if(resp?.data?.data?.user?.accountVerified) {
+            localStorage.setItem('userInfo', JSON.stringify(resp.data.data));
+             reset();
+             if(location.state?.from) {
+               navigate(location.state.from);
+             } else {
+               navigate('/');
+             }
+          } else {
+            setAlertMessage("No se puede proceder con el inicio de sesión, esta cuenta está pendiente de verificación.")
+          }
         }
       }).catch((error) => {
         setIsloading(false);
@@ -43,7 +55,7 @@ const [isLoading, setIsloading] = useState<boolean>(false);
     <form onSubmit={handleSubmit(onSubmit)}>
         <h3 className='mb-3'>Login</h3>
   <div className="form-group mb-3">
-    <label htmlFor="username">Email address</label>
+    <label htmlFor="username">Correo electrónico</label>
     <input type="email" className="form-control" id="username" placeholder="Ingrese email" {...register('username')}/>
       { errors.username && <div className="alert alert-danger mt-2">
                                                     <div> {errors.username?.message}</div></div> }
@@ -55,8 +67,11 @@ const [isLoading, setIsloading] = useState<boolean>(false);
                                                     <div> {errors.password?.message}</div></div> }
   </div>
 
-  <button className={`btn btn-primary me-3 ` + loginStyles['login-button']} type='submit'>Iniciar sesion</button>
+  <button className={`btn btn-primary me-3 ` + loginStyles['login-button']} type='submit'>Iniciar sesión</button>
 {isLoading && <Loading/>}
+<div className="mt-3">
+  {alertMessage && <Alert message={alertMessage} />}
+</div>
 </form>
  </div>
 }

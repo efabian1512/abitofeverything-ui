@@ -1,8 +1,9 @@
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import {useState }from 'react';
 import { useEffect } from 'react';
 import { userLogout} from '../../services/UserService';
+import RoleTypes from '../register/roles-enum';
 
 const Navbar = () => {
   const [isDropdownExpanded, setIsDropdownExpanded] = useState<boolean>(false);
@@ -10,29 +11,28 @@ const Navbar = () => {
 
   const [userInfo, setUserInfo] = useState<any>(null);
   const location = useLocation();
-
+  const navigate = useNavigate();
  
 
  
 
   useEffect(() => {
     setIsDropdownExpanded(false);
-   
     setUserInfo(JSON.parse(localStorage.getItem('userInfo')!));
-  
   }, []);
 
   useEffect(()=> {
     const userRoutes = ["/my/orders", "/admin/orders", "/admin/products"];
     setIsAUserRouteActive(userRoutes.includes(location.pathname));
-    console.log(userInfo);
+    setIsDropdownExpanded(false);
   }, [location]);
 
   const logout = () => {
-    userLogout(userInfo?.data?.accessToken).then(resp => {
+    userLogout(userInfo?.accessToken).then(resp => {
       if(resp.data.success) {
         localStorage.removeItem('userInfo');
         setUserInfo(null);
+        navigate("/login")
       }
     }).catch((error) => error);
   }
@@ -51,11 +51,12 @@ const Navbar = () => {
           </li>
          { userInfo && <li className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
             
-              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.data?.username}</a>
+              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.user?.email}</a>
               <div className={`dropdown-menu ${isDropdownExpanded ? ' show' :''}`}>
-                  <Link className="dropdown-item clickable" to="/my/orders">My Orders</Link>
-                  <Link className="dropdown-item clickable" to="/admin/orders">Manage Orders</Link>
-                  <Link className="dropdown-item clickable" to="/admin/products">Manage Products</Link>
+                <Link className="dropdown-item clickable" to="/my/orders">My Orders</Link>
+                { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
+                  {<Link className="dropdown-item clickable" to="/admin/orders">Manage Orders</Link>}
+                  <Link className="dropdown-item clickable" to="/admin/products">Manage Products</Link></>}
                   <a onClick={logout} className="dropdown-item clickable">Log Out</a>
               </div>
           </li> }

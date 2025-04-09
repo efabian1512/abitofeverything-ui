@@ -3,7 +3,8 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { saveProduct } from './ProductService';
 import useProductCategories from '../../../CustomHooks/ProductCategories';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import styles from './ProductForm.module.css';
 
 
 const schema = z.object({
@@ -40,24 +41,28 @@ const ProductForm = () => {
         saveProduct(formValue);
     }
     return (
-         <form onSubmit={handleSubmit(onSubmit)}>
+         <form className="h-100" onSubmit={handleSubmit(onSubmit)}>
             <div className="form-gropup mb-2">
+                <label htmlFor="title">Title</label>
                 <input {...register('title')} placeholder="Title:" type="text" id="title" className="form-control"/>
                { errors.title && <div className="alert alert-danger mt-2">
                     <div> {errors.title?.message}</div>
                 </div> }
             </div>
             <div className="form-gropup mb-2">
-                <input {...register('price', {valueAsNumber: true})} placeholder="Price:" type="text" id="price" className="form-control"/>
-                {errors.price && <div  className="alert alert-danger mt-2">
+                 <label htmlFor="price">Price</label>
+                 <div className="input-group mb-3">
+                <span className="input-group-text">$</span>
+                  <input {...register('price', {valueAsNumber: true})} placeholder="Price:" type="text" id="price" className="form-control"/>
+               
+            </div>
+               {errors.price && <div  className="alert alert-danger mt-2">
                     <div>{errors.price?.message}</div>
                 </div>}
             </div>
 
             <div className="form-gropup mb-2">
-                <input name="productImage" type="file"  className="form-control" onChange={handleProductImageOnChange}/>
-            </div>
-            <div className="form-gropup mb-2">
+                 <label htmlFor="category">Category</label>
                 <select {...register('category')}  className="form-select"  id="message">
                     <option></option>
                     {categories?.map((category: any) => <option key={category.id} value={category.id} id={category.id}>{category.categoryName}</option> 
@@ -66,6 +71,10 @@ const ProductForm = () => {
                 {/* {errors.category && <div  className="alert alert-danger mt-2">
                     <div>{errors.category?.message}</div>
                 </div>} */}
+            </div>
+              <div className="form-gropup mb-2">
+                <label htmlFor="productImage">Image</label>
+                <input name="productImage" type="file"  className="form-control" onChange={handleProductImageOnChange}/>
             </div>
             <button className="mt-3 btn btn-primary contact-btn" type="submit">Enviar</button>
         </form>

@@ -11,17 +11,21 @@ import ShoppingCart from "../components/shopping-cart/ShoppingCart";
 import Layout from "../components/layout/Layout";
 import MyOrders from '../components/my-orders/MyOrders';
 import ConfirmationEmail from "../components/comfirmation-email/ConfirmationEmail";
+import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoute";
+import AdminProtectedRoute from '../components/ProtectedRoutes/AdminProtectedRoute';
+import ProductForm from '../components/admin/products-form/ProductForm';
 
 const router = createBrowserRouter([
     {path: '', element: <Layout/>, children: [
          {index: true, element: <Home/>},
     {path: 'products', element: <Products/>},
     {path: 'shopping-cart', element: <ShoppingCart/>},
-    {path: 'check-out', element: <Checkout/>},
-    {path: 'order-success', element: <OrderSuccess/>},
-    {path: 'my/orders', element: <MyOrders/>},
-    {path: 'admin/products', element: <AdminProducts/>},
-    {path: 'admin/orders', element: <AdminOrders/>},
+    {path: 'check-out', element: (<ProtectedRoute> <Checkout/> </ProtectedRoute>)},
+    {path: 'order-success', element: (<ProtectedRoute> <OrderSuccess/></ProtectedRoute> )},
+    {path: 'my/orders', element: <ProtectedRoute> <MyOrders/></ProtectedRoute> },
+    {path: 'admin/products', element:( <AdminProtectedRoute><AdminProducts/></AdminProtectedRoute>)},
+    {path: 'admin/products/new', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
+    {path: 'admin/orders', element: (<AdminProtectedRoute><AdminOrders/></AdminProtectedRoute>)},
     {path:'*', element: <Home/>}
     ]},
     {path:'*', element: <Layout/>, children:[{index: true, element: <Home/>}]},
