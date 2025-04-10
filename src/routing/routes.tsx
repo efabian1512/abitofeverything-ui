@@ -26,6 +26,7 @@ const router = createBrowserRouter([
     {path: 'my/orders', element: <ProtectedRoute> <MyOrders/></ProtectedRoute> },
     {path: 'admin/products', element:( <AdminProtectedRoute><AdminProducts/></AdminProtectedRoute>)},
     {path: 'admin/products/new', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
+    {path: 'admin/products/:id', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
     {path: 'admin/orders', element: (<AdminProtectedRoute><AdminOrders/></AdminProtectedRoute>)},
     {path:'*', element: <Home/>}
     ]},

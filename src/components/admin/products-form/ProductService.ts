@@ -22,3 +22,6 @@ export const saveProduct = (product: any) => {
 export const getProductCategories = () => {
  return axiosInstance.get('api/shop/categories');
 }
+export const getProducts = () => {
+    return axiosInstance.get('api/shop/products')
+}
