@@ -5,7 +5,7 @@ import { deleteProductById, getProductById, saveProduct } from './ProductService
 import useProductCategories from '../../../CustomHooks/ProductCategories';
 import { useState, useEffect } from 'react';
 import Card from '../../card/Card';
-import styles from './ProductForm.module.css';
+import './ProductForm.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../../confirmation-modal/ConfimationModal';
 
@@ -30,6 +30,7 @@ type FormData = z.infer<typeof schema>;
     const [previewImageUrl, setPreviewImageUrl] = useState<string>(null);
     const [isFromInput, setIsFromInput] = useState<boolean>(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [file, setFile] = useState<any>(null);
     const navigate = useNavigate();
 
     const { id } = useParams();
@@ -84,22 +85,52 @@ const getProductInfo = () => {
         setValue('title', product?.data?.title);
         setValue('price', product?.data?.price);
         setValue('category', product.data?.category?.id);
-        setValue('productImage', 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage);
-      
-       // setValue('productImage', image);
-        setIsFromInput(false);
-        // Object.keys(product?.data).map((key: string) => {
-        //     setValue(key, product?.data[key]);
-        // });
+        //setValue('productImage', 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage);
+
+        const base64 = product?.data?.productImage;
+        const byteArray = new Uint8ClampedArray(
+            atob(base64)
+            .split('')
+            .map((char) => char.charCodeAt(0))
+        );
+
+        const blob = new Blob([byteArray], {type: product?.data?.imageType})
+
+        const file = new File([blob], 'test.jpeg');
+        
+        const fileList = [];
+        fileList[0] = file;
+        setFile(fileList);
+        //setValue('productImage',fileList[0]);
+
+        const fille = document.getElementById("productImage");
+       fille!.nodeValue = 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage;
+
+        //.addEventListener('change', event => {
+           // console.log(event);
+       // })
+        //  var reader = new FileReader();
+        //         reader.readAsDataURL(file);
+        //         reader.onload=(event: any) => {
+        //             console.log(event.target.result);
+        //         setPreviewImageUrl(event.target.result);
+        //         }
+
     });
+
+   
 }
+
 
     const onImageChange = (event: React.FormEvent<HTMLInputElement>) => {
      const target = event.target as HTMLInputElement & { files: FileList};
         if (target.files) {
+                setFile(target.files[0]);
+                console.log(target.files[0]);
                 var reader = new FileReader();
                 reader.readAsDataURL(target.files[0]);
                 reader.onload=(event: any) => {
+                console.log(event.target.result);
                 setPreviewImageUrl(event.target.result);
                 setIsFromInput(true);
             }
@@ -109,14 +140,14 @@ const getProductInfo = () => {
 
     const onSubmit = (data: FieldValues) => {
         const category = getCategory(data.category);
-        const formValue = {...data, productImage: data.productImage[0], category: category};
+        const formValue = {...data, productImage: id ? data.productImage : data.productImage[0], category: category};
 
         saveProduct(formValue, id);
         reset();
     }
     return (
         <>
-         <div className="row">
+         <div className="row form-control-container">
             <div className="col-md-6 col-sm-6 col-lg-6">
                   <form className="h-100" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-gropup mb-2">
@@ -137,7 +168,7 @@ const getProductInfo = () => {
                         <div>{errors.price?.message}</div>
                     </div>}
                 </div>
-                <div className="form-gropup mb-2">
+                <div className="form-gropup mb-3">
                      <label htmlFor="category">Category</label>
                     <select {...register('category')}  className="form-select"  id="category">
                         <option></option>
@@ -149,11 +180,20 @@ const getProductInfo = () => {
                     </div>}
                 </div>
                   <div className="form-gropup mb-2">
-                    <label htmlFor="productImage">Image</label>
-                    <input id="productImage" {...register('productImage')} type="file"  className="form-control" accept=".jpg, .jpeg, .png" onChange={onImageChange} />
-                     {errors.productImage && <div  className="alert alert-danger mt-2">
+                      <p className="mb-1">Product Image</p>
+                    <div className="d-flex">
+                        <div>
+                            <label className="product-image-label" htmlFor="productImage">Attach</label>
+                            <input id="productImage" type="file" accept=".jpg, .jpeg, .png" onChange={onImageChange} value={undefined} multiple />
+                        </div>
+                        <div style={{alignSelf:'end'}} className="inline-block flex-direction-column w-100">
+                            <p className="ms-2 my-0" style={{alignSelf: 'end'}}>{file?.name}</p>
+                            <div className="inline-block" style={{backgroundColor: 'black', height: '0.02rem', width: '100%', alignSelf: 'end'}}></div>
+                        </div>
+                    </div>
+                     {/* {errors.productImage && <div  className="alert alert-danger mt-2">
                         <div>{errors?.productImage?.message}</div>
-                    </div>}
+                    </div>} */}
                 </div>
                 <button className="mt-3 btn btn-primary contact-btn me-2" type="submit">{id ? 'Actualizar' : 'Crear'}</button>
                 {id && <button onClick={onRequestDelete} className="mt-3 btn btn-danger me-2 contact-btn" type="submit">Eliminar</button>}
@@ -162,7 +202,7 @@ const getProductInfo = () => {
                      </form>
             </div>
              <div className="col-md-6 col-sm-6 col-lg-6">
-                  <Card cardInfo={{ title: formValues.title, price: formValues.price, productImage: formValues.productImage?.length ? isFromInput ? previewImageUrl : formValues.productImage : previewImageUrl }}/>
+                  <Card cardInfo={{ title: formValues.title, price: formValues.price, productImage: previewImageUrl }}/>
              </div>
          </div>
          <ConfirmationModal message={"¿Esta seguro de que quiere eliminar este producto?"} isModalOpen={isDeleteModalOpen} onCancel={() => setIsDeleteModalOpen(false)} onConfirm={onDeleteConfirmation} />
@@ -172,3 +212,4 @@ const getProductInfo = () => {
 }
 
 export default ProductForm;
+

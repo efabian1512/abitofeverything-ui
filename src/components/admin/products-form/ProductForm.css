@@ -1,0 +1,18 @@
+.form-control-container  input[type="file"]{
+    display: none !important;
+}
+
+.form-control-container  .product-image-label {
+    display: inline-block;
+    text-transform: uppercase;
+    color: #fff;
+    background: #3e3736;
+    text-align: center;
+    padding: 15px 40px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    user-select: none;
+    cursor: pointer;
+    box-shadow: 5px 15px 25px rgba(0, 0, 0, 0.35);
+    border-radius: 5px;
+}
