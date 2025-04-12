@@ -1,6 +1,6 @@
 import { axiosInstance } from "../../../services/AxiosInstance";
 
-export const saveProduct = (product: any) => {
+export const saveProduct = (product: any, id?: string) => {
     const formData = new FormData();
     formData.append('title', product?.title);
     formData.append('price', product?.price);
@@ -16,7 +16,11 @@ export const saveProduct = (product: any) => {
 // };
     //message.isRead = false;
 
-    return axiosInstance.post('api/shop/products/save', formData);
+    if(!id)
+        return axiosInstance.post('api/shop/products/save', formData);
+   
+        formData.append('id', id);
+        return axiosInstance.put('api/shop/products/update', formData);
 }
 
 export const getProductCategories = () => {
@@ -24,4 +28,12 @@ export const getProductCategories = () => {
 }
 export const getProducts = () => {
     return axiosInstance.get('api/shop/products')
+}
+
+export const getProductById = (id: string) => {
+    return axiosInstance.get('api/shop/products/'+id);
+}
+
+export const deleteProductById = (id: string) => {
+    return axiosInstance.delete('api/shop/products/delete/'+id);
 }

@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 
 interface CardProps {
-    imageUrl: string;
+    //imageUrl: string;
     title: string;
     width?: string;
     linkUri?: string;
     price: number | undefined;
     linkProperties?: LinkProperties;
+    productImage?: any;
 }
 
 interface CardInfo {
@@ -19,11 +20,11 @@ interface LinkProperties {
 
 const Card = ({ cardInfo }: CardInfo) => {
     const showCard = () => {
-        return Object.values(cardInfo).some((value) =>  Boolean(value));
+        return Object.values(cardInfo).some((value) => typeof(value) === 'object' ? Boolean(value?.lenght) : Boolean(value));
     }
 
     return showCard() ? <div className="card" style={{width: cardInfo.width ? cardInfo.width : '100%'}}>
-  <img style={{objectFit: cardInfo.width ? 'none' : 'cover' }}  src={cardInfo?.imageUrl} className="card-img-top"/>
+  <img style={{objectFit: cardInfo.width ? 'none' : 'cover' }}  src={cardInfo?.productImage } className="card-img-top"/>
   <div className="card-body">
     <h5 className="card-title">{cardInfo?.title}</h5>
     <p className="card-text">{ cardInfo.price ? 'RD$ ' + cardInfo?.price + '.00' : ''}</p>

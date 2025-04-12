@@ -39,11 +39,11 @@ const AdminProducts = () => {
     ]
 
     const paginationComponentOptions = {
-	rowsPerPageText: 'Filas por página',
-	rangeSeparatorText: 'de',
-	selectAllRowsItem: true,
-	selectAllRowsItemText: 'Todos',
-};
+	    rowsPerPageText: 'Filas por página',
+	    rangeSeparatorText: 'de',
+	    selectAllRowsItem: true,
+	    selectAllRowsItemText: 'Todos',
+    };
 
     const handleFilter = (event: React.FormEvent<HTMLInputElement>) => {
         const target = event?.target as HTMLInputElement & { value: string};
