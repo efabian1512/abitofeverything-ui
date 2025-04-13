@@ -3,7 +3,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { deleteProductById, getProductById, saveProduct } from './ProductService';
 import useProductCategories from '../../../CustomHooks/ProductCategories';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, act } from 'react';
 import Card from '../../card/Card';
 import './ProductForm.css';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -27,7 +27,7 @@ type FormData = z.infer<typeof schema>;
     const { register, handleSubmit, formState: { errors }, reset, watch, setValue} = useForm<FormData>({resolver: zodResolver(schema) });
     const { categories } = useProductCategories();
 
-    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
     // const [isFromInput, setIsFromInput] = useState<boolean>(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [file, setFile] = useState<any>(null);
@@ -42,6 +42,7 @@ type FormData = z.infer<typeof schema>;
     }
 
     const formValues = watch();
+
 
     useEffect(() =>  {
     if(id) {
@@ -77,8 +78,14 @@ const onDeleteConfirmation = () => {
     })
 }
 
-const checkFileInputErrors = () => {
-    const message = !file ? 'Se require una imagen.' 
+const checkFileInputErrors = (fileLocal?: File) => {
+    const actualFile = fileLocal || file;
+
+    validateFileInput(actualFile);
+}
+
+const validateFileInput = (file: File) => {
+       const message = !file ? 'Se require una imagen.' 
         : !validateMaxFileSize(file) ? 'El Tamano maximo de imagen permitido es 3MB.' 
         : !checkFileType(file) ? 'Solo se permiten los formatos .jpg y npg.' : '';
    setFileInputErrorMessage(message);
@@ -119,13 +126,19 @@ const getProductInfo = () => {
                 var reader = new FileReader();
                 reader?.readAsDataURL(target?.files[0]);
                 reader.onload=(event: any) => {
+                
                 setPreviewImageUrl(event?.target?.result);
+
+                checkFileInputErrors(target.files[0]);
             }
         } 
     }
 
 
     const onSubmit = (data: FieldValues) => {
+
+        if(fileInputErrorMessage) return;
+
         const category = getCategory(data.category);
         const formValue = {...data, productImage: id ? data.productImage : file, category: category};
 
