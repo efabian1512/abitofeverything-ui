@@ -15,11 +15,11 @@ const ProductForm = () => {
 
 const schema = z.object({
     title: z.string().min(1, {message: 'El nombre es requerido.'}),
-    price: z.union([z.number({invalid_type_error: 'Este campo es requerido'}), z.nan().transform(() => undefined)]),             
+    price: z.number({invalid_type_error: 'Este campo es requerido'}),             
     category: z.string().min(1, {message: 'Se requiere una categoria.'}),
-    productImage: z.any().refine((files) => files?.length === 1, 'Se require una imagen.')
-                        .refine((files) => validateMaxFile(files[0]), 'El Tamano maximo de imagen permitido es 3MB.')
-                        .refine((files) => checkFileType(files[0]), 'Solo se permiten los formatos .jpg y npg.')                 
+    // productImage: z.any().refine((files) => files?.length === 1, 'Se require una imagen.')
+    //                     .refine((files) => validateMaxFile(files[0]), 'El Tamano maximo de imagen permitido es 3MB.')
+    //                     .refine((files) => checkFileType(files[0]), 'Solo se permiten los formatos .jpg y npg.')                 
 });
 
 type FormData = z.infer<typeof schema>;
@@ -27,10 +27,12 @@ type FormData = z.infer<typeof schema>;
     const { register, handleSubmit, formState: { errors }, reset, watch, setValue} = useForm<FormData>({resolver: zodResolver(schema) });
     const { categories } = useProductCategories();
 
-    const [previewImageUrl, setPreviewImageUrl] = useState<string>(null);
-    const [isFromInput, setIsFromInput] = useState<boolean>(false);
+    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+    // const [isFromInput, setIsFromInput] = useState<boolean>(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [file, setFile] = useState<any>(null);
+
+    const [fileInputErrorMessage, setFileInputErrorMessage] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const { id } = useParams();
@@ -40,11 +42,6 @@ type FormData = z.infer<typeof schema>;
     }
 
     const formValues = watch();
-    // const productImage = watch('productImage');
-
-    // console.log(productImage);
-
-    console.log(formValues);
 
     useEffect(() =>  {
     if(id) {
@@ -60,10 +57,10 @@ const checkFileType = (file: File) => {
     return false;
 }
 
-const validateMaxFile = (file: File) => {
+const validateMaxFileSize = (file: File) => {
     const MAX_FILE_SIZE = 3000000;
 
-    return file?.size < MAX_FILE_SIZE;
+    return file?.size <= MAX_FILE_SIZE;
 }
 
 const onRequestDelete = () => {
@@ -78,6 +75,13 @@ const onDeleteConfirmation = () => {
             
         }
     })
+}
+
+const checkFileInputErrors = () => {
+    const message = !file ? 'Se require una imagen.' 
+        : !validateMaxFileSize(file) ? 'El Tamano maximo de imagen permitido es 3MB.' 
+        : !checkFileType(file) ? 'Solo se permiten los formatos .jpg y npg.' : '';
+   setFileInputErrorMessage(message);
 }
 
 const getProductInfo = () => {
@@ -100,56 +104,44 @@ const getProductInfo = () => {
         
         const fileList = [];
         fileList[0] = file;
-        setFile(fileList);
+       // setFile(fileList);
         //setValue('productImage',fileList[0]);
 
         const fille = document.getElementById("productImage");
        fille!.nodeValue = 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage;
-
-        //.addEventListener('change', event => {
-           // console.log(event);
-       // })
-        //  var reader = new FileReader();
-        //         reader.readAsDataURL(file);
-        //         reader.onload=(event: any) => {
-        //             console.log(event.target.result);
-        //         setPreviewImageUrl(event.target.result);
-        //         }
-
     });
-
-   
 }
-
 
     const onImageChange = (event: React.FormEvent<HTMLInputElement>) => {
      const target = event.target as HTMLInputElement & { files: FileList};
-        if (target.files) {
+        if (target.files[0]) {
                 setFile(target.files[0]);
-                console.log(target.files[0]);
                 var reader = new FileReader();
-                reader.readAsDataURL(target.files[0]);
+                reader?.readAsDataURL(target?.files[0]);
                 reader.onload=(event: any) => {
-                console.log(event.target.result);
-                setPreviewImageUrl(event.target.result);
-                setIsFromInput(true);
+                setPreviewImageUrl(event?.target?.result);
             }
-        }
+        } 
     }
 
 
     const onSubmit = (data: FieldValues) => {
         const category = getCategory(data.category);
-        const formValue = {...data, productImage: id ? data.productImage : data.productImage[0], category: category};
+        const formValue = {...data, productImage: id ? data.productImage : file, category: category};
 
-        saveProduct(formValue, id);
-        reset();
+        saveProduct(formValue, id).then(resp => {
+             reset();
+             navigate('/admin/products');
+        }).catch(error => error);
+        
+       
     }
     return (
         <>
          <div className="row form-control-container">
             <div className="col-md-6 col-sm-6 col-lg-6">
                   <form className="h-100" onSubmit={handleSubmit(onSubmit)}>
+                   {/* <form className="h-100">  */}
                 <div className="form-gropup mb-2">
                     <label htmlFor="title">Title</label>
                     <input {...register('title')} placeholder="Title:" type="text" id="title" className="form-control"/>
@@ -161,7 +153,7 @@ const getProductInfo = () => {
                      <label htmlFor="price">Price</label>
                      <div className="input-group mb-3">
                     <span className="input-group-text">$</span>
-                      <input {...register('price', {valueAsNumber: true})} placeholder="Price:" type="text" id="price" className="form-control"/>
+                      <input {...register('price', {valueAsNumber: true})} placeholder="Price:" type="number" id="price" className="form-control"/>
              
                 </div>
                    {errors.price && <div  className="alert alert-danger mt-2">
@@ -191,14 +183,14 @@ const getProductInfo = () => {
                             <div className="inline-block" style={{backgroundColor: 'black', height: '0.02rem', width: '100%', alignSelf: 'end'}}></div>
                         </div>
                     </div>
-                     {/* {errors.productImage && <div  className="alert alert-danger mt-2">
-                        <div>{errors?.productImage?.message}</div>
-                    </div>} */}
+                     { fileInputErrorMessage && <div  className="alert alert-danger mt-2">
+                        <div>{fileInputErrorMessage}</div>
+                    </div>}
                 </div>
-                <button className="mt-3 btn btn-primary contact-btn me-2" type="submit">{id ? 'Actualizar' : 'Crear'}</button>
-                {id && <button onClick={onRequestDelete} className="mt-3 btn btn-danger me-2 contact-btn" type="submit">Eliminar</button>}
+                <button onClick={() => checkFileInputErrors()} className="mt-3 btn btn-primary contact-btn me-2" type="submit">{id ? 'Actualizar' : 'Crear'}</button>
+                {id && <button onClick={onRequestDelete} className="mt-3 btn btn-danger me-2 contact-btn" type="button">Eliminar</button>}
 
-                 <button onClick={() => navigate('/admin/products')} className="mt-3 btn btn-secondary contact-btn" type="submit">Cancelar</button>
+                 <button onClick={() => navigate('/admin/products')} className="mt-3 btn btn-secondary contact-btn" type="button">Cancelar</button>
                      </form>
             </div>
              <div className="col-md-6 col-sm-6 col-lg-6">
