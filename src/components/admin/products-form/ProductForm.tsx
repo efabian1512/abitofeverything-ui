@@ -28,7 +28,6 @@ type FormData = z.infer<typeof schema>;
     const { categories } = useProductCategories();
 
    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
-    // const [isFromInput, setIsFromInput] = useState<boolean>(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [file, setFile] = useState<any>(null);
 
@@ -72,8 +71,7 @@ const onDeleteConfirmation = () => {
     deleteProductById(id!).then(resp => {
         if(resp.data.success) {
             setIsDeleteModalOpen(false);
-            navigate('/admin/products');
-            
+            navigate('/admin/products'); 
         }
     })
 }
@@ -82,6 +80,15 @@ const checkFileInputErrors = (fileLocal?: File) => {
     const actualFile = fileLocal || file;
 
     validateFileInput(actualFile);
+}
+
+const readImageFile = (file: File) => {
+       var reader = new FileReader();
+        reader?.readAsDataURL(file);
+        reader.onload=(event: any) => {
+            setPreviewImageUrl(event?.target?.result);
+            checkFileInputErrors(file);
+        }
 }
 
 const validateFileInput = (file: File) => {
@@ -107,13 +114,11 @@ const getProductInfo = () => {
 
         const blob = new Blob([byteArray], {type: product?.data?.imageType})
 
-        const file = new File([blob], 'test.jpeg');
-        
-        const fileList = [];
-        fileList[0] = file;
-       // setFile(fileList);
-        //setValue('productImage',fileList[0]);
+        const file = new File([blob], product?.data?.imageName);
 
+        setFile(file);
+        readImageFile(file);
+        
         const fille = document.getElementById("productImage");
        fille!.nodeValue = 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage;
     });
@@ -123,14 +128,7 @@ const getProductInfo = () => {
      const target = event.target as HTMLInputElement & { files: FileList};
         if (target.files[0]) {
                 setFile(target.files[0]);
-                var reader = new FileReader();
-                reader?.readAsDataURL(target?.files[0]);
-                reader.onload=(event: any) => {
-                
-                setPreviewImageUrl(event?.target?.result);
-
-                checkFileInputErrors(target.files[0]);
-            }
+               readImageFile(target.files[0]);
         } 
     }
 
@@ -140,7 +138,7 @@ const getProductInfo = () => {
         if(fileInputErrorMessage) return;
 
         const category = getCategory(data.category);
-        const formValue = {...data, productImage: id ? data.productImage : file, category: category};
+        const formValue = {...data, productImage: file, category: category};
 
         saveProduct(formValue, id).then(resp => {
              reset();
