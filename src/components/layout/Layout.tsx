@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 const Layout = () => {
     return <>
-    <header>
+    <header className="sticky-top">
       <Navbar/>
     </header>
     <main className="flex-shrink-0 h-100">

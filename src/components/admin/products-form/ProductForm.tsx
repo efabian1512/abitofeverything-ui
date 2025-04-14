@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { deleteProductById, getProductById, saveProduct } from './ProductService';
 import useProductCategories from '../../../CustomHooks/ProductCategories';
 import { useState, useEffect, act } from 'react';
-import Card from '../../card/Card';
+import ProductCard from '../../card/Card';
 import './ProductForm.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../../confirmation-modal/ConfimationModal';
@@ -100,7 +100,6 @@ const getProductInfo = () => {
         setValue('title', product?.data?.title);
         setValue('price', product?.data?.price);
         setValue('category', product.data?.category?.id);
-        //setValue('productImage', 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage);
 
         const base64 = product?.data?.productImage;
         const byteArray = new Uint8ClampedArray(
@@ -115,9 +114,6 @@ const getProductInfo = () => {
 
         setFile(file);
         readImageFile(file);
-        
-        const fille = document.getElementById("productImage");
-       fille!.nodeValue = 'data:' + product?.data?.imageType+';base64,' + product?.data?.productImage;
     });
 }
 
@@ -202,7 +198,7 @@ const getProductInfo = () => {
                      </form>
             </div>
              <div className="col-md-6 col-sm-6 col-lg-6">
-                  <Card cardInfo={{ title: formValues.title, price: formValues.price, productImage: previewImageUrl }}/>
+                  <ProductCard showActions={false} cardInfo={{ title: formValues.title, price: formValues.price, productImage: previewImageUrl }}/>
              </div>
          </div>
          <ConfirmationModal message={"¿Esta seguro de que quiere eliminar este producto?"} isModalOpen={isDeleteModalOpen} onCancel={() => setIsDeleteModalOpen(false)} onConfirm={onDeleteConfirmation} />
