@@ -16,10 +16,7 @@ const ProductForm = () => {
 const schema = z.object({
     title: z.string().min(1, {message: 'El nombre es requerido.'}),
     price: z.number({invalid_type_error: 'Este campo es requerido'}),             
-    category: z.string().min(1, {message: 'Se requiere una categoria.'}),
-    // productImage: z.any().refine((files) => files?.length === 1, 'Se require una imagen.')
-    //                     .refine((files) => validateMaxFile(files[0]), 'El Tamano maximo de imagen permitido es 3MB.')
-    //                     .refine((files) => checkFileType(files[0]), 'Solo se permiten los formatos .jpg y npg.')                 
+    category: z.string().min(1, {message: 'Se requiere una categoria.'})             
 });
 
 type FormData = z.infer<typeof schema>;

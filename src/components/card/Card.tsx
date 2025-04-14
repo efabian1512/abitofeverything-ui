@@ -16,6 +16,7 @@ interface CardInfo {
 
 interface LinkProperties {
     desttination: string;
+    tag: string;
 }
 
 const Card = ({ cardInfo }: CardInfo) => {
@@ -24,11 +25,11 @@ const Card = ({ cardInfo }: CardInfo) => {
     }
 
     return showCard() ? <div className="card" style={{width: cardInfo.width ? cardInfo.width : '100%'}}>
-  <img style={{objectFit: cardInfo.width ? 'none' : 'cover' }}  src={cardInfo?.productImage } className="card-img-top"/>
+  <img style={{objectFit: cardInfo.width ? 'none' : 'cover', height: '30rem'}}  src={cardInfo?.productImage } className="card-img-top"/>
   <div className="card-body">
     <h5 className="card-title">{cardInfo?.title}</h5>
     <p className="card-text">{ cardInfo.price ? 'RD$ ' + cardInfo?.price + '.00' : ''}</p>
-    {cardInfo?.linkProperties && <Link to={cardInfo?.linkProperties?.desttination} className="btn btn-primary"></Link>}
+    {cardInfo?.linkProperties && <Link to={cardInfo?.linkProperties?.desttination} className="btn btn-primary">{cardInfo?.linkProperties?.tag}</Link>}
   </div>
 </div> : <></>
 }

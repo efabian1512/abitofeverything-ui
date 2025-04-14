@@ -1,8 +1,9 @@
+import Products from '../products/Products';
 import './Home.css';
 
 const Home = () => {
     return   <div>
-      <p>home works!</p>
+      <Products />
     </div>
 }
 
