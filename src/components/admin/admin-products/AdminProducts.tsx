@@ -48,7 +48,7 @@ const AdminProducts = () => {
     const handleFilter = (event: React.FormEvent<HTMLInputElement>) => {
         const target = event?.target as HTMLInputElement & { value: string};
         const query = target?.value;
-        const result = query ? filteredProducts.filter((product: any) => product?.title?.toLowerCase().includes(query?.toLowerCase()) || String(product?.price)?.toLowerCase().includes(query?.toLowerCase())  ) : products;
+        const result = query ? products.filter((product: any) => product?.title?.toLowerCase().includes(query?.toLowerCase()) || String(product?.price)?.toLowerCase().includes(query?.toLowerCase())  ) : products;
         setFilteredProducts(result);
     }
 
