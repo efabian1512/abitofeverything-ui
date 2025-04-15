@@ -5,10 +5,10 @@ import { Outlet } from 'react-router-dom';
 
 const Layout = () => {
     return <>
-    <header className="sticky-top">
+    <header className="fixed-top">
       <Navbar/>
     </header>
-    <main className="flex-shrink-0 h-100">
+    <main style={{marginTop: '5rem'}} className="h-100">
       <div className="container pt-3 h-100">
          <Outlet/>
       </div>
