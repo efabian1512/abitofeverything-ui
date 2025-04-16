@@ -4,10 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { deleteProductById, getProductById, saveProduct } from './ProductService';
 import useProductCategories from '../../../CustomHooks/ProductCategories';
 import { useState, useEffect, act } from 'react';
-import ProductCard from '../../card/Card';
+import ProductCard from '../../card/ProductCard';
 import './ProductForm.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../../confirmation-modal/ConfimationModal';
+import { ProductCategory } from '../../../models/Product';
 
 
 
@@ -33,8 +34,8 @@ type FormData = z.infer<typeof schema>;
 
     const { id } = useParams();
     
-    const getCategory = (id: string) => {
-        return categories?.find((category: any) => category.id === id);
+    const getCategory = (id: string): ProductCategory => {
+        return categories?.find((category: ProductCategory) => category.id === id);
     }
 
     const formValues = watch();
@@ -96,6 +97,7 @@ const validateFileInput = (file: File) => {
 }
 
 const getProductInfo = () => {
+    console.log('pathname', location.pathname);
     getProductById(id!).then((product) => {
         setValue('title', product?.data?.title);
         setValue('price', product?.data?.price);
@@ -198,7 +200,7 @@ const getProductInfo = () => {
                      </form>
             </div>
              <div className="col-md-6 col-sm-6 col-lg-6">
-                  <ProductCard showActions={false} cardInfo={{ title: formValues.title, price: formValues.price, productImage: previewImageUrl }}/>
+                  <ProductCard showActions={false} cardInfo={{product:{ title: formValues.title, price: formValues.price, productImage: previewImageUrl, category: getCategory(formValues.category) }}}/>
              </div>
          </div>
          <ConfirmationModal message={"¿Esta seguro de que quiere eliminar este producto?"} isModalOpen={isDeleteModalOpen} onCancel={() => setIsDeleteModalOpen(false)} onConfirm={onDeleteConfirmation} />

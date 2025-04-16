@@ -17,23 +17,23 @@ export const saveProduct = (product: any, id?: string) => {
     //message.isRead = false;
 
     if(!id)
-        return axiosInstance.post('api/shop/products/save', formData);
+        return axiosInstance.post('/shop/products/save', formData);
    
         formData.append('id', id);
-        return axiosInstance.put('api/shop/products/update', formData);
+        return axiosInstance.put('/shop/products/update', formData);
 }
 
 export const getProductCategories = () => {
- return axiosInstance.get('api/shop/categories');
+ return axiosInstance.get('/shop/categories');
 }
 export const getProducts = () => {
-    return axiosInstance.get('api/shop/products')
+    return axiosInstance.get('/shop/products')
 }
 
 export const getProductById = (id: string) => {
-    return axiosInstance.get('api/shop/products/'+id);
+    return axiosInstance.get('/shop/products/'+id);
 }
 
 export const deleteProductById = (id: string) => {
-    return axiosInstance.delete('api/shop/products/delete/'+id);
+    return axiosInstance.delete('/shop/products/delete/'+id);
 }
