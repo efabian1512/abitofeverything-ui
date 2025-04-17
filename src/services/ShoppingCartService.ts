@@ -1,4 +1,6 @@
-import { Product, ShoppingCartInfo, ShoppingCartItem } from "../models/Product";
+import { Product } from "../models/Product";
+import { ShoppingCartInfo } from "../models/ShoppingCartInfo";
+import { ShoppingCartItem } from "../models/ShoppingCartItem";
 import { axiosInstance } from "./AxiosInstance";
 
 

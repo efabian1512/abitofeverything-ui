@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
-import { Product, ShoppingCartInfo } from '../../models/Product';
+import { useDispatch, useSelector } from 'react-redux';
+import { Product } from '../../models/Product';
 import { addToCartService, removeFromCartService } from '../../services/ShoppingCartService';
+import { AppDispatch, RootState } from '../../state/store';
 import styles from './Card.module.css';
+import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
 
 interface CardProps {
     product: Product
@@ -12,7 +15,6 @@ interface CardProps {
 interface CardInfo {
     cardInfo: CardProps;
     showActions: boolean;
-    shoppingCart?: ShoppingCartInfo;
     retrieveCartInfo?: () => void;
 }
 
@@ -21,30 +23,34 @@ interface CardInfo {
 //     tag: string;
 // }
 
-const ProductCard = ({ cardInfo, showActions = false, shoppingCart, retrieveCartInfo }: CardInfo) => {
+const ProductCard = ({ cardInfo, showActions = false }: CardInfo) => {
  
+   const dispatch = useDispatch<AppDispatch>();
+
+    const cart = useSelector((state: RootState) => state.cartInfo.cart);
+    
 const addToCart = () => {
   addToCartService({...cardInfo.product, productImage: null}).then(() => {
-    if(retrieveCartInfo) {
-      retrieveCartInfo();
-    }
+    dispatch(getShoppingCartThunk());
   }).catch((error) => error);
 }
 
 const removeFromCart = () => {
   removeFromCartService({...cardInfo.product, productImage: null}).then(() => {
-    if(retrieveCartInfo) {
-      retrieveCartInfo();
-    }
+    dispatch(getShoppingCartThunk());
   }).catch((error) => error);
 }
 
 const getQuantity = () => {
-  if (!shoppingCart) return 0;
+  if (!cart) return 0;
 
-  const item = shoppingCart.items?.find(item => item.product.id === cardInfo.product.id);
+  const item = cart.items?.find(item => item.product.id === cardInfo.product.id);
   return item ? item.quantity : 0;
 }
+
+useEffect(() => {
+ dispatch(getShoppingCartThunk());
+}, [])
 
     return cardInfo?.product?.title ? <div className="card">
   {cardInfo.product.productImage && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className="card-img-top" alt={cardInfo?.product.title}/>}
@@ -59,7 +65,7 @@ const getQuantity = () => {
         <div className="col-2">
             <button onClick={removeFromCart} className="btn btn-secondary w-100 ">-</button>
         </div>
-        <div className="col text-center">
+        <div className="col text-center align-self-center">
             { getQuantity() } en el carrito 
         </div>
         <div className="col-2">

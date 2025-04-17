@@ -8,7 +8,7 @@ import ProductCard from '../../card/ProductCard';
 import './ProductForm.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../../confirmation-modal/ConfimationModal';
-import { ProductCategory } from '../../../models/Product';
+import { ProductCategory } from "../../../models/ProductCategory";
 
 
 
