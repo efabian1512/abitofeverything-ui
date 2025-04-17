@@ -12,17 +12,15 @@ const Navbar = () => {
   const [isAUserRouteActive, setIsAUserRouteActive,] = useState<boolean>(false);
 
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [quantity, setQuantity] = useState<number>(0);
   const location = useLocation();
   const navigate = useNavigate();
 
   const cart = useSelector((state: RootState) => state.cartInfo.cart);
+  let totalItemQuantityInCart = 0;
 
- const getShoppingCartItemQuantity  = async () => {
-    if(cart) {
-     setQuantity(cart.items.reduce((acumulador, item) => acumulador + item.quantity, 0));
-    }
- }
+  if(cart) {
+    totalItemQuantityInCart = cart.items.reduce((acumulador, item) => acumulador + item.quantity, 0);
+  }
 
   useEffect(() => {
     setIsDropdownExpanded(false);
@@ -34,10 +32,6 @@ const Navbar = () => {
     setIsAUserRouteActive(userRoutes.includes(location.pathname));
     setIsDropdownExpanded(false);
   }, [location]);
-
-  useEffect(() => {
-    getShoppingCartItemQuantity();
-  },[cart]);
 
   const logout = () => {
     userLogout(userInfo?.accessToken).then(resp => {
@@ -61,7 +55,7 @@ const Navbar = () => {
           <li className="nav-item">
               <NavLink onClick={() => setIsDropdownExpanded(false)} className="nav-link"  to="/shopping-cart">
                 Shopping Cart
-                <span className="badge rounded-pill bg-warning text-dark ms-1">{quantity}</span>
+                <span className="badge rounded-pill bg-warning text-dark ms-1">{totalItemQuantityInCart}</span>
                 </NavLink>
           </li>
          { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
