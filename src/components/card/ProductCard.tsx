@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Product } from '../../models/Product';
-import { addToCartService, removeFromCartService } from '../../services/ShoppingCartService';
+import { addToCartService, getActualCart, removeFromCartService } from '../../services/ShoppingCartService';
 import { AppDispatch, RootState } from '../../state/store';
 import styles from './Card.module.css';
 import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
+import ProductQuantity from '../product-quantity/ProductQuantity';
+import { ShoppingCartInfo } from '../../models/ShoppingCartInfo';
+import { getActualProductInCart } from '../admin/products-form/ProductService';
 
 interface CardProps {
     product: Product
@@ -15,7 +18,6 @@ interface CardProps {
 interface CardInfo {
     cardInfo: CardProps;
     showActions: boolean;
-    retrieveCartInfo?: () => void;
 }
 
 // interface LinkProperties {
@@ -27,30 +29,15 @@ const ProductCard = ({ cardInfo, showActions = false }: CardInfo) => {
  
    const dispatch = useDispatch<AppDispatch>();
 
-    const cart = useSelector((state: RootState) => state.cartInfo.cart);
-    
+   const cart = useSelector((state: RootState) => state.cartInfo.cart);
+   const actualCart = cart ? getActualCart(cart) : null;
+   const product: Product = getActualProductInCart(actualCart, cardInfo.product);
+
 const addToCart = () => {
   addToCartService({...cardInfo.product, productImage: null}).then(() => {
     dispatch(getShoppingCartThunk());
   }).catch((error) => error);
 }
-
-const removeFromCart = () => {
-  removeFromCartService({...cardInfo.product, productImage: null}).then(() => {
-    dispatch(getShoppingCartThunk());
-  }).catch((error) => error);
-}
-
-const getQuantity = () => {
-  if (!cart) return 0;
-
-  const item = cart.items?.find(item => item.product.id === cardInfo.product.id);
-  return item ? item.quantity : 0;
-}
-
-useEffect(() => {
- dispatch(getShoppingCartThunk());
-}, [])
 
     return cardInfo?.product?.title ? <div className="card">
   {cardInfo.product.productImage && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className="card-img-top" alt={cardInfo?.product.title}/>}
@@ -60,18 +47,10 @@ useEffect(() => {
   </div>
   {showActions && <div className={`card-footer ${styles['padding-0']}`}>
       
-      { getQuantity() === 0 &&  <button onClick={() => addToCart()} className="btn btn-secondary w-100">Agregar al carrito</button> }
-      {getQuantity() > 0 && <div className="row g-0">
-        <div className="col-2">
-            <button onClick={removeFromCart} className="btn btn-secondary w-100 ">-</button>
-        </div>
-        <div className="col text-center align-self-center">
-            { getQuantity() } en el carrito 
-        </div>
-        <div className="col-2">
-            <button onClick={addToCart} className="btn btn-secondary w-100 ">+</button>
-        </div>
-        </div>}
+      { !product.quantity ?  <button onClick={() => addToCart()} className="btn btn-secondary w-100">Agregar al carrito</button> 
+      : <ProductQuantity product={product} />
+      }
+
   </div>}
 </div> 
  : <></>

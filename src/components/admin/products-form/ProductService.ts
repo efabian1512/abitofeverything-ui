@@ -1,4 +1,6 @@
 import { axiosInstance } from "../../../services/AxiosInstance";
+import { ShoppingCartInfo } from '../../../models/ShoppingCartInfo';
+import { Product } from "../../../models/Product";
 
 export const saveProduct = (product: any, id?: string) => {
     const formData = new FormData();
@@ -36,4 +38,8 @@ export const getProductById = (id: string) => {
 
 export const deleteProductById = (id: string) => {
     return axiosInstance.delete('/shop/products/delete/'+id);
+}
+
+export const getActualProductInCart = (cart: ShoppingCartInfo | null, product: Product) => {
+   return cart ? {...product, quantity: cart.items.find(item => item.product.id === product.id)?.quantity} : {...product, quantity: 0};
 }

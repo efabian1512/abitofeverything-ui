@@ -6,6 +6,7 @@ export interface Product {
     price: number;
     category: ProductCategory;
     productImage: any;
+    quantity: number | undefined;
 }
 
 

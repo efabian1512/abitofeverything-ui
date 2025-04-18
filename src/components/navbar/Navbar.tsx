@@ -6,6 +6,8 @@ import { userLogout} from '../../services/UserService';
 import RoleTypes from '../register/roles-enum';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/store';
+import { ShoppingCartInfo } from '../../models/ShoppingCartInfo';
+import { getActualCart } from '../../services/ShoppingCartService';
 
 const Navbar = () => {
   const [isDropdownExpanded, setIsDropdownExpanded] = useState<boolean>(false);
@@ -16,11 +18,8 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const cart = useSelector((state: RootState) => state.cartInfo.cart);
-  let totalItemQuantityInCart = 0;
-
-  if(cart) {
-    totalItemQuantityInCart = cart.items.reduce((acumulador, item) => acumulador + item.quantity, 0);
-  }
+ 
+ const actualCart = cart ? getActualCart(cart) : null;
 
   useEffect(() => {
     setIsDropdownExpanded(false);
@@ -55,7 +54,7 @@ const Navbar = () => {
           <li className="nav-item">
               <NavLink onClick={() => setIsDropdownExpanded(false)} className="nav-link"  to="/shopping-cart">
                 Shopping Cart
-                <span className="badge rounded-pill bg-warning text-dark ms-1">{totalItemQuantityInCart}</span>
+                <span className="badge rounded-pill bg-warning text-dark ms-1">{actualCart?.totalItemsCount}</span>
                 </NavLink>
           </li>
          { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
