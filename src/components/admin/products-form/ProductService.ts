@@ -8,15 +8,6 @@ export const saveProduct = (product: any, id?: string) => {
     formData.append('price', product?.price);
     formData.append('productImage', product.productImage);
     formData.append('category', JSON.stringify(product.category));
-//     const config = {
-//   headers: {
-//     'Content-Type': 'text/plain',()
-//     credentials: 'include',
-//     'ACCESS-CONTROL-ALLOW-ORIGIN': '*',
-//     'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS"
-//   }
-// };
-    //message.isRead = false;
 
     if(!id)
         return axiosInstance.post('/shop/products/save', formData);
@@ -41,5 +32,5 @@ export const deleteProductById = (id: string) => {
 }
 
 export const getActualProductInCart = (cart: ShoppingCartInfo | null, product: Product) => {
-   return cart ? {...product, quantity: cart.items.find(item => item.product.id === product.id)?.quantity} : {...product, quantity: 0};
+   return cart ? {...product, quantity: cart.items.find(item => item.id === product.id)?.quantity} : {...product, quantity: 0};
 }

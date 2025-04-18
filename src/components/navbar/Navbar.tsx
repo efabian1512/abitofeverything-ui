@@ -6,7 +6,6 @@ import { userLogout} from '../../services/UserService';
 import RoleTypes from '../register/roles-enum';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/store';
-import { ShoppingCartInfo } from '../../models/ShoppingCartInfo';
 import { getActualCart } from '../../services/ShoppingCartService';
 
 const Navbar = () => {
@@ -53,18 +52,18 @@ const Navbar = () => {
         <ul className="navbar-nav me-auto mb-2 mb-md-0">
           <li className="nav-item">
               <NavLink onClick={() => setIsDropdownExpanded(false)} className="nav-link"  to="/shopping-cart">
-                Shopping Cart
+                Carrito
                 <span className="badge rounded-pill bg-warning text-dark ms-1">{actualCart?.totalItemsCount}</span>
                 </NavLink>
           </li>
          { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
               <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.user?.email}</a>
               <div onMouseLeave={() => setIsDropdownExpanded(false)} className={`dropdown-menu ${isDropdownExpanded ? ' show not-hover' :''}`}>
-                <Link className="dropdown-item clickable" to="/my/orders">My Orders</Link>
+                <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
-                  {<Link className="dropdown-item clickable" to="/admin/orders">Manage Orders</Link>}
-                  <Link className="dropdown-item clickable" to="/admin/products">Manage Products</Link></>}
-                  <a onClick={logout} className="dropdown-item clickable">Log Out</a>
+                  {<Link className="dropdown-item clickable" to="/admin/orders">Administrar Ordenes</Link>}
+                  <Link className="dropdown-item clickable" to="/admin/products">Administrar Productos</Link></>}
+                  <a onClick={logout} className="dropdown-item clickable">Cerrar sesión</a>
               </div>
           </li> }
         </ul>

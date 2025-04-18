@@ -97,7 +97,6 @@ const validateFileInput = (file: File) => {
 }
 
 const getProductInfo = () => {
-    console.log('pathname', location.pathname);
     getProductById(id!).then((product) => {
         setValue('title', product?.data?.title);
         setValue('price', product?.data?.price);

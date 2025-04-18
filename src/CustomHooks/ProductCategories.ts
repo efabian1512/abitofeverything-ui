@@ -8,9 +8,8 @@ export const useProductCategories = () => {
         getProductCategories().then(response => {
             setCategories(response.data);
         })
-        .catch((error) => {
-            console.log(error);
-        });
+        .catch((error) =>  error
+        );
     }, []);
 
     return {categories: categories};
