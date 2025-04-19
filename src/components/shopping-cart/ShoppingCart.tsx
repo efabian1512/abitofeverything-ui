@@ -30,35 +30,42 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
    
  }
 
- return <div>
-     <h1>Carrito de Compras</h1>
-     <p>Tienes {actualCart?.totalItemsCount} articulos en el carrito.</p>
-     <table className="table">
-         <thead>
-             <tr>
-                 <th>Articulo</th>
-                 <th>Cantidad</th>
-                 <th>Precio</th>
-             </tr>
-         </thead>
-         <tbody>
-            { actualCart?.items.map((item) => <tr key={item.id}>
-                 <td>{item?.title}</td>
-                 <td><ProductQuantity item={item} product={products.find((product: any) => product.id === item.productId)!} /></td>
-                 <td>{'RD$ '+item.totalPrice+'.00'}</td>
-                 <td></td>
-             </tr>) }
-         </tbody>
-         <tfoot>
-             <tr>
-                 <td></td>
-                 <td></td>
-                 <td className="fw-bold">{'RD$ '+actualCart?.totalPrice +'.00'}</td>
-             </tr>
-         </tfoot>
-     </table>
-     <button onClick={clearCart} className="btn btn-danger btn-sm">Vaciar carrito</button>
- </div>
+ return <>
+     <h1 className="text-start">Carrito de Compras</h1>
+     <div className="row col-lg-10 col-md-10 col-sm-10">
+           <p className="ps-0">Tienes {actualCart?.totalItemsCount} {`articulo${ actualCart?.totalItemsCount === 1 ?'' : 's'} en el carrito.`}</p>
+         <table className="table"> 
+             <thead>
+                 <tr>
+                     <th></th>
+                     <th>Articulo</th>
+                     <th className="text-center" style={{width: "230px"}}>Cantidad</th>
+                     <th className="text-end" style={{width: "200px"}}>Precio</th>
+                 </tr>
+             </thead>
+             <tbody>
+                { actualCart?.items.map((item) => <tr key={item.id}>
+                    <td>
+                        <div className="thumbnail" style={{backgroundImage: 'url('+ 'data:' + item.imageType+';base64,' + item.productImage+')'}} ></div>
+                        {/* <img src={ 'data:' + item.imageType+';base64,' + item.productImage} className="thumbnail" alt="thumbnail"/> */}
+                        </td>
+                     <td>{item?.title}</td>
+                     <td><ProductQuantity item={item} product={products.find((product: any) => product.id === item.productId)!} /></td>
+                     <td className="text-end">{'RD$ '+item.totalPrice+'.00'}</td>
+                 </tr>) }
+             </tbody>
+             <tfoot>
+                 <tr>
+                     <td></td>
+                     <td></td>
+                     <td></td>
+                     <td className="fw-bold text-end">{'RD$ '+actualCart?.totalPrice +'.00'}</td>
+                 </tr>
+             </tfoot>
+         </table>
+     </div>
+      <button onClick={clearCart} className="btn btn-danger btn-sm">Vaciar carrito</button>
+ </>
 }
 
 export default ShoppingCart;

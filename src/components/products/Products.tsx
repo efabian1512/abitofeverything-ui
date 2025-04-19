@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getProducts } from '../admin/products-form/ProductService';
 import ProductFilter from './products-filter/ProductsFilter';
 import { useSearchParams } from 'react-router-dom';
+import { ShoppingCartInfo } from '../../models/ShoppingCartInfo';
 
 const Products = () => {
 
@@ -11,29 +12,30 @@ const Products = () => {
     const [filteredProducts, setFilteredProducts] = useState<any>([]);
     const [myParams, setMyParams] = useSearchParams();
     const [category, setCategory] = useState<string | null>(null);
-    //const [cart, setCart] = useState<ShoppingCartInfo>();
-   
+  
      const handleFilter = (category: string) => {
         setMyParams({category});
      }
 
-    //  const getShoppingCart = async () => {
-    //     const resp = await getCart();
-
-    //     setCart(resp.data);
-    //  }
-
-    useEffect(() => {
-        getProducts().then((products) => {
-            setProducts(products.data);
-        }).catch((error) => error);
-    }, []);
-
-    useEffect(() => {
+    const applyFilter = () => {
         const query = myParams.get('category');
         setCategory(query);
         const filteredProductsLocal = query ? products.filter((product:any) => product?.category?.categoryName?.toLowerCase().replace(' ', '') === query) : products;
         setFilteredProducts(filteredProductsLocal);
+    }
+
+    const populateProducts = () => {
+        getProducts().then((products) => {
+            setProducts(products.data);
+        }).catch((error) => error);
+    }
+
+    useEffect(() => {
+        populateProducts();
+    }, []);
+
+    useEffect(() => {
+        applyFilter()
     }, [myParams, products]);
 
  
