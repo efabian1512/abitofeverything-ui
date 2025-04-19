@@ -47,16 +47,17 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
                 { actualCart?.items.map((item) => <tr key={item.id}>
                     <td>
                         <div className="thumbnail" style={{backgroundImage: 'url('+ 'data:' + item.imageType+';base64,' + item.productImage+')'}} ></div>
-                        {/* <img src={ 'data:' + item.imageType+';base64,' + item.productImage} className="thumbnail" alt="thumbnail"/> */}
                         </td>
-                     <td>{item?.title}</td>
-                     <td><ProductQuantity item={item} product={products.find((product: any) => product.id === item.productId)!} /></td>
-                     <td className="text-end">{'RD$ '+item.totalPrice+'.00'}</td>
+                     <td className="align-middle">
+                             {item?.title}
+                         </td>
+                     <td className="align-middle"><ProductQuantity item={item} product={products.find((product: any) => product.id === item.productId)!} /></td>
+                     <td className="text-end align-middle">{'RD$ '+item.totalPrice+'.00'}</td>
                  </tr>) }
              </tbody>
              <tfoot>
                  <tr>
-                     <td></td>
+                     <td className="fw-bold">Total</td>
                      <td></td>
                      <td></td>
                      <td className="fw-bold text-end">{'RD$ '+actualCart?.totalPrice +'.00'}</td>
