@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Product } from '../../models/Product';
 import { addToCartService, getActualCart } from '../../services/ShoppingCartService';
 import { AppDispatch, RootState } from '../../state/store';
-import styles from './Card.module.css';
+import styles from './ProductCard.module.css';
 import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
 import ProductQuantity from '../product-quantity/ProductQuantity';
 import { ShoppingCartItem } from '../../models/ShoppingCartItem';
