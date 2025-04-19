@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { getActualCart } from '../../services/ShoppingCartService';
-import { RootState } from '../../state/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearCartService, getActualCart } from '../../services/ShoppingCartService';
+import { AppDispatch, RootState } from '../../state/store';
 import ProductQuantity from '../product-quantity/ProductQuantity';
 import './ShoppingCart.css';
 import { useState } from 'react';
 import { getProducts } from '../admin/products-form/ProductService';
+import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
 
 const ShoppingCart = () => {
 
@@ -14,9 +15,20 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
  const actualCart = cart ? getActualCart(cart) : null;
  const [products, setProducts] = useState([]);
 
+ const dispatch = useDispatch<AppDispatch>();
+
  useEffect(() => {
     getProducts().then(resp => setProducts(resp.data));
  },[]);
+
+ const clearCart = () => {
+     try {
+          clearCartService(actualCart?.id!).then(() =>  dispatch(getShoppingCartThunk()));
+     } catch (error) {
+         console.log(error);
+     }
+   
+ }
 
  return <div>
      <h1>Carrito de Compras</h1>
@@ -41,10 +53,11 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
              <tr>
                  <td></td>
                  <td></td>
-                 <td className="fw-bold">{'RD$ '+actualCart?.totalPrice+'.00'}</td>
+                 <td className="fw-bold">{'RD$ '+actualCart?.totalPrice +'.00'}</td>
              </tr>
          </tfoot>
      </table>
+     <button onClick={clearCart} className="btn btn-danger btn-sm">Vaciar carrito</button>
  </div>
 }
 

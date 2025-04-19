@@ -48,6 +48,14 @@ export const getActualCart = (cart: ShoppingCartInfo) => {
     return new ShoppingCartInfo(cart.items, cart.id, cart.dateCreated);
 }
 
+export const clearCartService = (cartId: string) => {
+
+    const formData = new FormData();
+
+    formData.append('id', cartId);
+    return axiosInstance.post("shop/shoppingcart/clear", formData)
+}
+
 const updateItemQuantity  = async (product: Product, change: number) => {
       let cart = await getCart();
 
