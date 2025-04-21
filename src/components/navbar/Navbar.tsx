@@ -7,6 +7,8 @@ import RoleTypes from '../register/roles-enum';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/store';
 import { getActualCart } from '../../services/ShoppingCartService';
+import { useDispatch } from 'react-redux';
+import { removeUser } from '../../state/user/userSlice';
 
 const Navbar = () => {
   const [isDropdownExpanded, setIsDropdownExpanded] = useState<boolean>(false);
@@ -15,6 +17,7 @@ const Navbar = () => {
   const [userInfo, setUserInfo] = useState<any>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const cart = useSelector((state: RootState) => state.cartInfo.cart);
  
@@ -36,6 +39,7 @@ const Navbar = () => {
       if(resp.data.success) {
         localStorage.removeItem('userInfo');
         setUserInfo(null);
+        dispatch(removeUser());
         navigate("/login")
       }
     }).catch((error) => error);
@@ -44,7 +48,9 @@ const Navbar = () => {
 
     return  <nav className="navbar navbar-expand-md navbar-light bg-light">
         <div className="container-fluid">
-            <NavLink className="navbar-brand" to="/">Home</NavLink>
+            <NavLink className="navbar-brand" to="/">
+             { location.pathname === '/' ? <i className="bi bi-house-fill"></i> : <i className="bi bi-house"></i>}
+              </NavLink>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
         </button>

@@ -7,6 +7,7 @@ import './ShoppingCart.css';
 import { useState } from 'react';
 import { getProducts } from '../admin/products-form/ProductService';
 import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
+import { Link } from 'react-router-dom';
 
 const ShoppingCart = () => {
 
@@ -23,7 +24,7 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
 
  const clearCart = () => {
      try {
-          clearCartService(actualCart?.id!).then(() =>  dispatch(getShoppingCartThunk()));
+          clearCartService().then(() =>  dispatch(getShoppingCartThunk()));
      } catch (error) {
          console.log(error);
      }
@@ -33,7 +34,9 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
  return <>
      <h1 className="text-start">Carrito de Compras</h1>
      <div className="row col-lg-10 col-md-10 col-sm-10">
-           <p className="ps-0">Tienes {actualCart?.totalItemsCount} {`articulo${ actualCart?.totalItemsCount === 1 ?'' : 's'} en el carrito.`}</p>
+           <p className="ps-0">Tienes {actualCart?.totalItemsCount} {`articulo${ actualCart?.totalItemsCount === 1 ?'' : 's'} en el carrito.`}
+           {actualCart?.items.length && <button onClick={clearCart} className="btn btn-light btn-sm">Vaciar carrito</button>}
+           </p>
          <table className="table"> 
              <thead>
                  <tr>
@@ -65,7 +68,8 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
              </tfoot>
          </table>
      </div>
-      <button onClick={clearCart} className="btn btn-danger btn-sm">Vaciar carrito</button>
+     {actualCart?.items.length && <Link to="/check-out" className="btn btn-primary">Check Out</Link>}
+      
  </>
 }
 

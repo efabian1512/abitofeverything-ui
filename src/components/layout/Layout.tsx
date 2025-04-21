@@ -22,7 +22,7 @@ const Layout = () => {
       <Navbar/>
     </header>
     <main style={{marginTop: '5rem'}} className="h-100">
-      <div className="container ps-0 pt-3 h-100">
+      <div className="container pt-3 h-100">
           <ScrollRestoration/>
          <Outlet/>
       </div>

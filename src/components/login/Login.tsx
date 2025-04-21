@@ -7,6 +7,8 @@ import Loading from '../Loading/Loading';
 import { z } from 'zod';
 import loginStyles from './Login.module.css';
 import Alert from '../alerts/Alert';
+import { setUser } from '../../state/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 const schema = z.object({
     username: z.string().min(1, {message: 'El email requerido.'}),
@@ -18,6 +20,8 @@ type FormData = z.infer<typeof schema>;
 const Login = () => {
     
 const { register, handleSubmit, reset, formState: { errors }} = useForm<FormData>({resolver: zodResolver(schema) });
+
+const dispatch = useDispatch();
 
 const navigate  = useNavigate();
 const location = useLocation();
@@ -33,6 +37,7 @@ const [alertMessage, setAlertMessage] = useState<string>('');
             setIsloading(false);
         if(resp.data) {
           if(resp?.data?.data?.user?.accountVerified) {
+            dispatch(setUser(resp?.data?.data?.user));
             localStorage.setItem('userInfo', JSON.stringify(resp.data.data));
              reset();
              if(location.state?.from) {

@@ -48,8 +48,8 @@ export const getActualCart = (cart: ShoppingCartInfo) => {
     return new ShoppingCartInfo(cart.items, cart.id, cart.dateCreated);
 }
 
-export const clearCartService = (cartId: string) => {
-
+export const clearCartService = async () => {
+    let cartId = await getOrCreateCartId();
     const formData = new FormData();
 
     formData.append('id', cartId);

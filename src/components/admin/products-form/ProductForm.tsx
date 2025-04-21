@@ -134,7 +134,7 @@ const getProductInfo = () => {
         const category = getCategory(data.category);
         const formValue = {...data, productImage: file, category: category};
 
-        saveProduct(formValue, id).then(resp => {
+        saveProduct(formValue, id).then(() => {
              reset();
              navigate('/admin/products');
         }).catch(error => error);
@@ -146,7 +146,6 @@ const getProductInfo = () => {
          <div className="row form-control-container">
             <div className="col-md-6 col-sm-6 col-lg-6">
                   <form className="h-100" onSubmit={handleSubmit(onSubmit)}>
-                   {/* <form className="h-100">  */}
                 <div className="form-gropup mb-2">
                     <label htmlFor="title">Title</label>
                     <input {...register('title')} placeholder="Title:" type="text" id="title" className="form-control"/>
@@ -159,7 +158,6 @@ const getProductInfo = () => {
                      <div className="input-group mb-3">
                     <span className="input-group-text">$</span>
                       <input {...register('price', {valueAsNumber: true})} placeholder="Price:" type="number" id="price" className="form-control"/>
-             
                 </div>
                    {errors.price && <div  className="alert alert-danger mt-2">
                         <div>{errors.price?.message}</div>

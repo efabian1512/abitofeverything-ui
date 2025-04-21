@@ -15,6 +15,7 @@ import ProtectedRoute from "../components/ProtectedRoutes/ProtectedRoute";
 import AdminProtectedRoute from '../components/ProtectedRoutes/AdminProtectedRoute';
 import ProductForm from '../components/admin/products-form/ProductForm';
 import LoginRegisterProtectedRoute from '../components/ProtectedRoutes/LoginRegisterProtectedRoute';
+import MyOrderDetails from "../components/my-order-details/MyOrderDetails";
 
 const router = createBrowserRouter([
     {path: '', element: <Layout/>, children: [
@@ -22,8 +23,9 @@ const router = createBrowserRouter([
     {path: 'products', element: <Products/>},
     {path: 'shopping-cart', element: <ShoppingCart/>},
     {path: 'check-out', element: (<ProtectedRoute> <Checkout/> </ProtectedRoute>)},
-    {path: 'order-success', element: (<ProtectedRoute> <OrderSuccess/></ProtectedRoute> )},
+    {path: 'order-success/:id', element: (<ProtectedRoute> <OrderSuccess/></ProtectedRoute> )},
     {path: 'my/orders', element: <ProtectedRoute> <MyOrders/></ProtectedRoute> },
+    {path: 'my/order/details/:id', element: <ProtectedRoute> <MyOrderDetails/></ProtectedRoute> },
     {path: 'admin/products', element:( <AdminProtectedRoute><AdminProducts/></AdminProtectedRoute>)},
     {path: 'admin/products/new', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
     {path: 'admin/products/:id', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
