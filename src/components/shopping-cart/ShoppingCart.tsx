@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { getProducts } from '../admin/products-form/ProductService';
 import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
 import { Link } from 'react-router-dom';
+import ConfirmationModal from '../confirmation-modal/ConfimationModal';
 
 const ShoppingCart = () => {
 
@@ -15,6 +16,7 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
  
  const actualCart = cart ? getActualCart(cart) : null;
  const [products, setProducts] = useState([]);
+ const [isCleartCartModalOpen, setIsCleartCartModalOpen] = useState<boolean>(false);
 
  const dispatch = useDispatch<AppDispatch>();
 
@@ -31,11 +33,16 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
    
  }
 
+ const onClearCartConfirmation = () => {
+    clearCart();
+    setIsCleartCartModalOpen(false);
+ }
+
  return <>
      <h1 className="text-start">Carrito de Compras</h1>
      <div className="row col-lg-10 col-md-10 col-sm-10">
            <p className="ps-0">Tienes {actualCart?.totalItemsCount} {`articulo${ actualCart?.totalItemsCount === 1 ?'' : 's'} en el carrito.`}
-           {actualCart?.items.length && <button onClick={clearCart} className="btn btn-light btn-sm">Vaciar carrito</button>}
+           {actualCart?.items?.length! > 0 && <button onClick={() => setIsCleartCartModalOpen(true)} className="btn btn-light btn-sm">Vaciar carrito</button>}
            </p>
          <table className="table"> 
              <thead>
@@ -67,9 +74,10 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
                  </tr>
              </tfoot>
          </table>
+         <ConfirmationModal message={"¿Esta seguro de que quiere vaciar el carrito.?"} isModalOpen={isCleartCartModalOpen} onCancel={() => setIsCleartCartModalOpen(false)} onConfirm={onClearCartConfirmation} />
      </div>
      {actualCart?.items.length && <Link to="/check-out" className="btn btn-primary">Check Out</Link>}
-      
+    
  </>
 }
 
