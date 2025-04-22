@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { useEffect, useState } from 'react';
 import { getProducts } from '../products-form/ProductService';
+import { paginationComponentOptions } from '../../../config/defaulttableconfig';
 
 
 const AdminProducts = () => {
@@ -38,12 +39,7 @@ const AdminProducts = () => {
         }
     ]
 
-    const paginationComponentOptions = {
-	    rowsPerPageText: 'Filas por página',
-	    rangeSeparatorText: 'de',
-	    selectAllRowsItem: true,
-	    selectAllRowsItemText: 'Todos',
-    };
+  
 
     const handleFilter = (event: React.FormEvent<HTMLInputElement>) => {
         const target = event?.target as HTMLInputElement & { value: string};
