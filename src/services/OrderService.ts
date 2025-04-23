@@ -15,5 +15,5 @@ export const getOrderById = (id: string) => {
 }
 
 export const getActualOrders = (orders: any) => {
-    return orders.data.map((order: any) => ({...order, datePlaced: getSpanishFormattedDateByNumericDate(order.datePlaced)}));
+    return orders?.map((order: any) => ({...order, datePlaced: getSpanishFormattedDateByNumericDate(order.datePlaced)}));
 }

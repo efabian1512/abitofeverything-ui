@@ -5,6 +5,7 @@ import { User } from './User';
 export class Order {
     datePlaced: number;
     items: any[] = [];
+    total: number = 0;
 
     constructor(public user: User | null, public shippingInfo: ShippingInfo, shoppingCart: ShoppingCartInfo | null) {
         this.datePlaced = new Date().getTime();
@@ -16,5 +17,6 @@ export class Order {
                     totalPrice: item.totalPrice
                 }
             }) : [];
+     this.total = shoppingCart?.totalPrice ? shoppingCart?.totalPrice : 0;
     }
 }

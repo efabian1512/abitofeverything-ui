@@ -14,7 +14,6 @@ const AdminOrders = () => {
         getAllOrders().then(
             resp => {
                 const actualOrders = getActualOrders(resp.data)
-                console.log(actualOrders);
                 setOrders(actualOrders);
                 setFilteredOrders(actualOrders);
             }

@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     {path: 'check-out', element: (<ProtectedRoute><NoItemsProtectedRoute><Checkout/></NoItemsProtectedRoute></ProtectedRoute>)},
     {path: 'order-success/:id', element: (<ProtectedRoute> <OrderSuccess/></ProtectedRoute> )},
     {path: 'my/orders', element: <ProtectedRoute> <MyOrders/></ProtectedRoute> },
-    {path: 'order/details/:id', element: <ProtectedRoute> <OrderDetails/></ProtectedRoute> },
+    {path: 'order/details/:id', element: <ProtectedRoute> <AdminProtectedRoute><OrderDetails/></AdminProtectedRoute></ProtectedRoute> },
     {path: 'admin/products', element:( <AdminProtectedRoute><AdminProducts/></AdminProtectedRoute>)},
     {path: 'admin/products/new', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
     {path: 'admin/products/:id', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},

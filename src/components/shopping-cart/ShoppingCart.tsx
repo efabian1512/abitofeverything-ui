@@ -9,6 +9,7 @@ import { getProducts } from '../admin/products-form/ProductService';
 import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlice';
 import { Link } from 'react-router-dom';
 import ConfirmationModal from '../confirmation-modal/ConfimationModal';
+import Thumbnail from '../thumbnail/Thumbnail';
 
 const ShoppingCart = () => {
 
@@ -56,7 +57,7 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
              <tbody>
                 { actualCart?.items.map((item) => <tr key={item.id}>
                     <td>
-                        <div className="thumbnail" style={{backgroundImage: 'url('+ 'data:' + item.imageType+';base64,' + item.productImage+')'}} ></div>
+                        <Thumbnail inline={false} imageType={item.imageType} productImage={item.productImage}/>
                         </td>
                      <td className="align-middle">
                              {item?.title}
