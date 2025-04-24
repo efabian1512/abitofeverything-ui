@@ -1,11 +1,12 @@
 
 import { useEffect, useState } from 'react'
 import { getOrderById } from '../../services/OrderService';
-import { Link, useParams } from 'react-router-dom';
-import { getSpanishFormattedDateByNumericDate, formatPrice, formatPhoneNumber } from '../../Utilities';
-import Thumbnail from '../thumbnail/Thumbnail';
-import { isAdmin } from '../../services/UserService';
+import { useParams, Link } from 'react-router-dom';
 import StatusPill from '../order-status/StatusPill';
+import { isAdmin } from '../../services/UserService';
+import { formatPhoneNumber, formatPrice, getSpanishFormattedDateByNumericDate } from '../../Utilities';
+import Thumbnail from '../thumbnail/Thumbnail';
+
 
 const OrderDetails = () => {
 
@@ -21,24 +22,27 @@ const OrderDetails = () => {
 
  return <div>
      <h1 className="mb-3">Detalles de la orden</h1>
-     <div className="mb-4">
-         <h3 className="mb-3">Estado de la orden</h3> 
-         <div className="d-flex align-items-center">
+     <ul className="list-group list-group-flush">
+        <li className="list-group-item border-info pb-5">
+            <div className="mb-4">
+            <h3 className="mb-3">Estado de la orden</h3> 
+          <div className="d-flex align-items-center">
              <StatusPill status={order?.statusInfo?.status} />
-         </div>
-     </div>
-    { isAdmin() && <Link className="btn btn-primary" to="/">Actualizar estado de la orden</Link> }
+        </div>
+      </div>
+      { isAdmin() && <Link className="btn btn-primary" to="/">Actualizar estado de la orden</Link> }
+        </li>
+        <li className="list-group-item border-info pb-5">
+              <dl className="mb-2">
+               <dt>Cliente: </dt>
+            <dd>{`${order?.user?.name}.`}</dd>
 
-      <hr className="text-info"/>
-     <dl className="mb-2">
-             <dt>Cliente: </dt>
-             <dd>{`${order?.user?.name}.`}</dd>
-
-               <dt>Fecha: </dt>
-             <dd>{`${getSpanishFormattedDateByNumericDate(order?.datePlaced)}.`}</dd>
+            <dt>Fecha: </dt>
+         <dd>{`${getSpanishFormattedDateByNumericDate(order?.datePlaced)}.`}</dd>
      </dl>
-     <hr className="text-info"/>
-     <h3 className="my-2">Artículos</h3>
+        </li>
+        <li className="list-group-item border-info pb-5">
+             <h3 className="my-2">Artículos</h3>
      <ul className="list-group">
         {order?.items.map((item: any ) => <li key={item.id} className="w-100 list-group-item d-flex align-items-center gap-1">
             <div className="me-1">
@@ -49,8 +53,9 @@ const OrderDetails = () => {
 
             <li className="list-group-item"><span className="fw-bold">Total:</span> <span className="fw-bold">{ formatPrice(order?.total)}</span></li>
      </ul>
-     <hr className="text-info"/>
-     <h3 className="mb-5">Información de envío</h3>
+        </li>
+        <li className="list-group-item border-info pb-5">
+                 <h3 className="mb-5">Información de envío</h3>
 
    <div className="row">
        <div className="col-sm-6 col-md-6 col-lg-6 mb-3">
@@ -82,6 +87,8 @@ const OrderDetails = () => {
              <dd>{`${formatPhoneNumber(order?.shippingInfo?.phoneNumber) }.`}</dd>
        </div>
    </div>
+        </li>
+     </ul>
  </div>
 }
 
