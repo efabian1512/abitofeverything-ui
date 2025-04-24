@@ -42,14 +42,14 @@ const cart = useSelector((state: RootState) => state.cartInfo.cart);
  return <>
      <h1 className="text-start">Carrito de Compras</h1>
      <div className="row col-lg-10 col-md-10 col-sm-10">
-           <p className="ps-0">Tienes {actualCart?.totalItemsCount} {`articulo${ actualCart?.totalItemsCount === 1 ?'' : 's'} en el carrito.`}
+           <p className="ps-0">Tienes {actualCart?.totalItemsCount} {`artículo${ actualCart?.totalItemsCount === 1 ?'' : 's'} en el carrito.`}
            {actualCart?.items?.length! > 0 && <button onClick={() => setIsCleartCartModalOpen(true)} className="btn btn-light btn-sm">Vaciar carrito</button>}
            </p>
          <table className="table"> 
              <thead>
                  <tr>
                      <th></th>
-                     <th>Articulo</th>
+                     <th>Artículo</th>
                      <th className="text-center" style={{width: "230px"}}>Cantidad</th>
                      <th className="text-end" style={{width: "200px"}}>Precio</th>
                  </tr>

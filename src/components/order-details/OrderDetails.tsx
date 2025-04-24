@@ -5,14 +5,12 @@ import { Link, useParams } from 'react-router-dom';
 import { getSpanishFormattedDateByNumericDate, formatPrice, formatPhoneNumber } from '../../Utilities';
 import Thumbnail from '../thumbnail/Thumbnail';
 import { isAdmin } from '../../services/UserService';
+import StatusPill from '../order-status/StatusPill';
 
 const OrderDetails = () => {
 
     const [order, setOrder] = useState<any>();
     const {id} = useParams();
-
-
-
 
     useEffect(() => {
         if(id) {
@@ -22,12 +20,13 @@ const OrderDetails = () => {
     },[id]);
 
  return <div>
-
-    
      <h1 className="mb-3">Detalles de la orden</h1>
-     <p className="mb-4">
-         <h3 className="mb-3">Estado de la orden</h3> <div style={{width: "20px", height:"20px", borderRadius: "100%"}} className="d-inline-block me-1 bg-secondary"></div>{order?.status?.status}
-     </p>
+     <div className="mb-4">
+         <h3 className="mb-3">Estado de la orden</h3> 
+         <div className="d-flex align-items-center">
+             <StatusPill status={order?.statusInfo?.status} />
+         </div>
+     </div>
     { isAdmin() && <Link className="btn btn-primary" to="/">Actualizar estado de la orden</Link> }
 
       <hr className="text-info"/>
@@ -39,7 +38,7 @@ const OrderDetails = () => {
              <dd>{`${getSpanishFormattedDateByNumericDate(order?.datePlaced)}.`}</dd>
      </dl>
      <hr className="text-info"/>
-     <h3 className="my-2">Articulos</h3>
+     <h3 className="my-2">Artículos</h3>
      <ul className="list-group">
         {order?.items.map((item: any ) => <li key={item.id} className="w-100 list-group-item d-flex align-items-center gap-1">
             <div className="me-1">
@@ -51,24 +50,38 @@ const OrderDetails = () => {
             <li className="list-group-item"><span className="fw-bold">Total:</span> <span className="fw-bold">{ formatPrice(order?.total)}</span></li>
      </ul>
      <hr className="text-info"/>
-     <h3>Informacion de envio</h3>
+     <h3 className="mb-5">Información de envío</h3>
 
-      <dl className="mt-3 pb-2">
-             <dt>Beneficiario: </dt>
-             <dd>{`${order?.shippingInfo?.customerName}.`}</dd>
-             <dt>Direccion: </dt>
+   <div className="row">
+       <div className="col-sm-6 col-md-6 col-lg-6 mb-3">
+            <dt>Beneficiario: </dt>
+            <dd>{`${order?.shippingInfo?.customerName}.`}</dd>
+       </div>
+       <div className="col-sm-6 col-md-6 col-lg-6  mb-3">
+             <dt>Dirección: </dt>
              <dd>{`${order?.shippingInfo?.addressLine1}, ${order?.shippingInfo?.addressLine2}.`}</dd>
-             <dt>Ciudad: </dt>
+       </div>
+       <div className="col-sm-6 col-md-6 col-lg-6  mb-3">
+            <dt>Ciudad: </dt>
              <dd>{`${order?.shippingInfo?.city}.`}</dd>
-               <dt>Estado o Provincia: </dt>
+       </div>
+       <div className="col-sm-6 col-md-6 col-lg-6  mb-3">
+             <dt>Estado o Provincia: </dt>
              <dd>{`${order?.shippingInfo?.state}.`}</dd>
-             <dt>Pais: </dt>
+       </div>
+       <div className="col-sm-6 col-md-6 col-lg-6 mb-3">
+             <dt>País: </dt>
              <dd>{`${order?.shippingInfo?.country}.`}</dd>
-             <dt>Codigo postal: </dt>
+       </div>
+       <div className="col-sm-6 col-md-6 col-lg-6  mb-3">
+                <dt>Código postal: </dt>
              <dd>{`${order?.shippingInfo?.zipCode}.`}</dd>
-             <dt>Numero de telefono: </dt>
+       </div>
+       <div className="col-sm-6 col-md-6 col-lg-6  mb-3">
+             <dt>Número de teléfono: </dt>
              <dd>{`${formatPhoneNumber(order?.shippingInfo?.phoneNumber) }.`}</dd>
-     </dl>
+       </div>
+   </div>
  </div>
 }
 

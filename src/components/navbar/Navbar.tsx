@@ -58,11 +58,13 @@ const Navbar = () => {
         <ul className="navbar-nav me-auto mb-2 mb-md-0">
           <li className="nav-item">
               <NavLink onClick={() => setIsDropdownExpanded(false)} className="nav-link"  to="/shopping-cart">
-                Carrito
+                {location.pathname === '/shopping-cart' ? <i title={'Carrito'} className="bi bi-cart-fill"></i> : <i className="bi bi-cart"></i>}
                 <span className="badge rounded-pill bg-warning text-dark ms-1">{actualCart?.totalItemsCount}</span>
                 </NavLink>
           </li>
-         { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
+        </ul>
+        <ul className="d-flex align-items-center navbar-nav mb-2 mb-md-0">
+          { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
               <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.user?.email}</a>
               <div onMouseLeave={() => setIsDropdownExpanded(false)} className={`dropdown-menu ${isDropdownExpanded ? ' show not-hover' :''}`}>
                 <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
@@ -72,8 +74,6 @@ const Navbar = () => {
                   <a onClick={logout} className="dropdown-item clickable">Cerrar sesión</a>
               </div>
           </li> }
-        </ul>
-        <ul className="d-flex align-items-center navbar-nav mb-2 mb-md-0">
            {!userInfo && <li className="nav-item">
             <Link className="nav-link clickable" to="/login">Login</Link>
             </li>}
