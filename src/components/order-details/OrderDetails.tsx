@@ -48,7 +48,7 @@ const OrderDetails = () => {
             <div className="me-1">
                 <Thumbnail inline={true} imageType={item?.product?.imageType} productImage={item?.product?.productImage}/>
             </div>
-         <div><p className="mb-0"><span>{item.quantity}</span> {item?.product?.title} </p><p className="mb-0 fw-bold">{ formatPrice(item?.totalPrice)}</p></div> 
+         <div><p className="mb-0">{item?.product?.title} <span>{`(${item.quantity} artículo${ item.quantity === 1 ? '' : 's'}).`}</span>  </p><p className="mb-0 fw-bold">{ formatPrice(item?.totalPrice)}</p></div> 
             </li>)}
 
             <li className="list-group-item"><span className="fw-bold">Total:</span> <span className="fw-bold">{ formatPrice(order?.total)}</span></li>

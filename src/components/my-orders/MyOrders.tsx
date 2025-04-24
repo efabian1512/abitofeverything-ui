@@ -26,8 +26,8 @@ const [orders, setOrders] = useState([]);
                </div>
                <div className="mt-5">
                    <div className="d-flex mb-2">
-                      <span className="fw-bold">{item.quantity + ' x '} </span> 
-                     <span className="ms-1 fw-bold">{item.product.title}</span>
+                      {/* <span className="fw-bold">{item.quantity + ' x '} </span>  */}
+                     <span className="me-1 fw-bold">{item?.product?.title}<span/></span> <span>{`(${item.quantity} artículo${ item.quantity === 1 ? '' : 's'}).`}</span>
                    </div>
                    <dl>
                        <dt>Precio por unidad</dt>
