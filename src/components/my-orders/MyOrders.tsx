@@ -7,7 +7,7 @@ import { sortByDateDesc } from '../../services/UtilsSetrvice';
 import { Link } from 'react-router-dom';
 
 const MyOrders = () => {
-const [orders, setOrders] = useState([]);
+const [orders, setOrders] = useState<any>();
 
     useEffect(() => {
       const user =  getLoggedUser();
@@ -15,7 +15,7 @@ const [orders, setOrders] = useState([]);
         getOrdersByUserId(userId).then(resp => setOrders(resp?.data?.sort(sortByDateDesc)));
     },[]);
 
-    return <ul className="list-group list-group-flush">
+    return <> {orders?.length > 0 && <ul className="list-group list-group-flush">
         {orders?.map((order: any) => <li className="list-group-item pb-5 border-info pt-2" key={order.id}>
             <p className="fw-bold mb-5">{ getSpanishFormattedDateByNumericDate(order.datePlaced)}</p>
             <p className="fw-bold">Artículos</p>
@@ -26,7 +26,6 @@ const [orders, setOrders] = useState([]);
                </div>
                <div className="mt-5">
                    <div className="d-flex mb-2">
-                      {/* <span className="fw-bold">{item.quantity + ' x '} </span>  */}
                      <span className="me-1 fw-bold">{item?.product?.title}<span/></span> <span>{`(${item.quantity} artículo${ item.quantity === 1 ? '' : 's'}).`}</span>
                    </div>
                    <dl>
@@ -45,7 +44,8 @@ const [orders, setOrders] = useState([]);
                 <Link className="btn btn-primary mt-3" to={"/order/details/"+order?.id}>Ver toda la informacion del pedido</Link>
             </ul>
         </li>)}
-    </ul>
+    </ul> }
+  { orders && orders.length === 0 &&  <div className="d-flex justify-content-center"><div className="text-center alert alert-warning w-100 mt-3">Aún no tienes ordenes.</div></div>}</>
 }
 
 export default MyOrders;

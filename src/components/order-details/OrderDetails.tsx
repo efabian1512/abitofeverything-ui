@@ -23,7 +23,7 @@ const OrderDetails = () => {
  return <div>
      <h1 className="mb-3">Detalles de la orden</h1>
      <ul className="list-group list-group-flush">
-        <li className="list-group-item border-info pb-5">
+        <li className="list-group-item border-info">
             <div className="mb-4">
             <h3 className="mb-3">Estado de la orden</h3> 
           <div className="d-flex align-items-center">
@@ -32,7 +32,7 @@ const OrderDetails = () => {
       </div>
       { isAdmin() && <Link className="btn btn-primary" to="/">Actualizar estado de la orden</Link> }
         </li>
-        <li className="list-group-item border-info pb-5">
+        <li className="list-group-item border-info">
               <dl className="mb-2">
                <dt>Cliente: </dt>
             <dd>{`${order?.user?.name}.`}</dd>
