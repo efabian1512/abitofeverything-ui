@@ -17,3 +17,7 @@ export const getOrderById = (id: string) => {
 export const getActualOrders = (orders: any) => {
     return orders?.map((order: any) => ({...order, datePlaced: getSpanishFormattedDateByNumericDate(order.datePlaced)}));
 }
+
+export const getOrdersByUserId = (userId: string) => {
+    return axiosInstance.get('/shop/orders/byUser/'+userId);
+}

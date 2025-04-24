@@ -34,7 +34,7 @@ const AdminOrders = () => {
         {
             name: '',
             cell: (row: {id: any}) => (
-                <Link className="text-decoration-none" to={'/order/details/'+row.id}>View</Link>
+                <Link className="text-decoration-none" to={'/order/details/'+row.id}>Ver detalles</Link>
             )
         }
     ];

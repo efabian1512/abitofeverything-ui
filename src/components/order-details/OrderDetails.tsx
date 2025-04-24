@@ -1,15 +1,18 @@
 
 import { useEffect, useState } from 'react'
 import { getOrderById } from '../../services/OrderService';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getSpanishFormattedDateByNumericDate, formatPrice, formatPhoneNumber } from '../../Utilities';
 import Thumbnail from '../thumbnail/Thumbnail';
-
+import { isAdmin } from '../../services/UserService';
 
 const OrderDetails = () => {
 
     const [order, setOrder] = useState<any>();
     const {id} = useParams();
+
+
+
 
     useEffect(() => {
         if(id) {
@@ -19,7 +22,15 @@ const OrderDetails = () => {
     },[id]);
 
  return <div>
-     <h3>Detalles de la orden</h3>
+
+    
+     <h1 className="mb-3">Detalles de la orden</h1>
+     <p className="mb-4">
+         <h3 className="mb-3">Estado de la orden</h3> <div style={{width: "20px", height:"20px", borderRadius: "100%"}} className="d-inline-block me-1 bg-secondary"></div>{order?.status?.status}
+     </p>
+    { isAdmin() && <Link className="btn btn-primary" to="/">Actualizar estado de la orden</Link> }
+
+      <hr className="text-info"/>
      <dl className="mb-2">
              <dt>Cliente: </dt>
              <dd>{`${order?.user?.name}.`}</dd>
@@ -28,7 +39,7 @@ const OrderDetails = () => {
              <dd>{`${getSpanishFormattedDateByNumericDate(order?.datePlaced)}.`}</dd>
      </dl>
      <hr className="text-info"/>
-     <h3 className="my-2">Items</h3>
+     <h3 className="my-2">Articulos</h3>
      <ul className="list-group">
         {order?.items.map((item: any ) => <li key={item.id} className="w-100 list-group-item d-flex align-items-center gap-1">
             <div className="me-1">
