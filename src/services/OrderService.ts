@@ -21,3 +21,17 @@ export const getActualOrders = (orders: any) => {
 export const getOrdersByUserId = (userId: string) => {
     return axiosInstance.get('/shop/orders/byUser/'+userId);
 }
+
+export const getOrderStatusList =  () => {
+    return axiosInstance.get('/shop/order/status-list');
+}
+
+export const updateOrderStatus =  (status: any, orderId: string) => {
+
+    const payload = {
+        orderId,
+        status
+    }
+
+    return axiosInstance.put('/shop/orders/update-status', payload);
+}

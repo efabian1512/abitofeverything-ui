@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { getProducts } from '../admin/products-form/ProductService';
 import ProductFilter from './products-filter/ProductsFilter';
 import { useSearchParams } from 'react-router-dom';
-import { ShoppingCartInfo } from '../../models/ShoppingCartInfo';
 
 const Products = () => {
 

@@ -17,6 +17,7 @@ import ProductForm from '../components/admin/products-form/ProductForm';
 import LoginRegisterProtectedRoute from '../components/ProtectedRoutes/LoginRegisterProtectedRoute';
 import NoItemsProtectedRoute from "../components/ProtectedRoutes/NoItemsProtectedRoute";
 import OrderDetails from '../components/order-details/OrderDetails';
+import OrderStatusUpdate from '../components/admin/order-status-update/OrderStatusUpdate';
 
 const router = createBrowserRouter([
     {path: '', element: <Layout/>, children: [
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
     {path: 'admin/products/new', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
     {path: 'admin/products/:id', element:( <AdminProtectedRoute><ProductForm/></AdminProtectedRoute>)},
     {path: 'admin/orders', element: (<AdminProtectedRoute><AdminOrders/></AdminProtectedRoute>)},
+    {path: 'admin/orders/status-update/:id', element: (<AdminProtectedRoute><OrderStatusUpdate/></AdminProtectedRoute>)},
     {path:'*', element: <Home/>}
     ]},
     {path:'*', element: <Layout/>, children:[{index: true, element: <Home/>}]},

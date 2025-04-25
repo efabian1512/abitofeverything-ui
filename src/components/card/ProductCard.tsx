@@ -36,6 +36,8 @@ const addToCart = () => {
 
     return cardInfo?.product?.title ? <div className="card">
   {cardInfo.product.productImage && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className="card-img-top" alt={cardInfo?.product.title}/>}
+  {/* {cardInfo.product.productImage && <div className={styles['producs-product-image']} style={{backgroundImage: 'url('+cardInfo?.product?.productImage+')'}} ></div>} */}
+  
   <div className="card-body">
     <h5 className="card-title">{cardInfo?.product?.title}</h5>
     <p className="card-text">{ formatPrice(cardInfo?.product?.price)}</p>

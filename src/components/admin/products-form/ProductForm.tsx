@@ -28,6 +28,8 @@ type FormData = z.infer<typeof schema>;
    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [file, setFile] = useState<any>(null);
+    const [currentFile, setCurrentFile] = useState<any>(null);
+    const [currentFormValue, setCurrentFormValue] = useState<any>();
 
     const [fileInputErrorMessage, setFileInputErrorMessage] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -38,8 +40,10 @@ type FormData = z.infer<typeof schema>;
         return categories?.find((category: ProductCategory) => category.id === id);
     }
 
-    const formValues = watch();
+    const formValue = watch();
 
+    console.log('file', file);
+     console.log('current file', currentFile);
 
     useEffect(() =>  {
     if(id) {
@@ -109,12 +113,21 @@ const getProductInfo = () => {
             .map((char) => char.charCodeAt(0))
         );
 
+       
         const blob = new Blob([byteArray], {type: product?.data?.imageType})
 
         const file = new File([blob], product?.data?.imageName);
-
+        
         setFile(file);
+        setCurrentFile(file);
         readImageFile(file);
+
+         const formValue = {
+            title: product?.data?.title,
+            price: product?.data?.price,
+            category: product?.data?.category?.id
+        }
+        setCurrentFormValue(formValue);
     });
 }
 
@@ -138,9 +151,24 @@ const getProductInfo = () => {
              reset();
              navigate('/admin/products');
         }).catch(error => error);
-        
-       
     }
+
+    const isThereAnyChange = () => {
+        let isFormEqual = true;
+        let isFileEqual = true;
+
+        if(formValue && currentFormValue) {
+            console.log('array2', Object.keys(currentFormValue))
+            isFormEqual = Object.keys(currentFormValue).every(key => formValue[key as keyof typeof formValue] === currentFormValue[key]);
+        }
+
+        if(file && currentFile) {
+            isFileEqual = file === currentFile;
+        }
+
+     return isFormEqual && isFileEqual;
+    }
+
     return (
         <>
          <div className="row form-control-container">
@@ -190,14 +218,14 @@ const getProductInfo = () => {
                         <div>{fileInputErrorMessage}</div>
                     </div>}
                 </div>
-                <button onClick={() => checkFileInputErrors()} className="mt-3 btn btn-primary contact-btn me-2" type="submit">{id ? 'Actualizar' : 'Crear'}</button>
+                <button disabled={id && isThereAnyChange() ? true : false} onClick={() => checkFileInputErrors()} className="mt-3 btn btn-primary contact-btn me-2" type="submit">{id ? 'Actualizar' : 'Crear'}</button>
                 {id && <button onClick={onRequestDelete} className="mt-3 btn btn-danger me-2 contact-btn" type="button">Eliminar</button>}
 
                  <button onClick={() => navigate('/admin/products')} className="mt-3 btn btn-secondary contact-btn" type="button">Cancelar</button>
                      </form>
             </div>
              <div className="col-md-6 col-sm-6 col-lg-6">
-                  <ProductCard showActions={false} cardInfo={{product:{ title: formValues.title, price: formValues.price, productImage: previewImageUrl, category: getCategory(formValues.category) }}}/>
+                  <ProductCard showActions={false} cardInfo={{product:{ title: formValue.title, price: formValue.price, productImage: previewImageUrl, category: getCategory(formValue.category) }}}/>
              </div>
          </div>
          <ConfirmationModal message={"¿Esta seguro de que quiere eliminar este producto?"} isModalOpen={isDeleteModalOpen} onCancel={() => setIsDeleteModalOpen(false)} onConfirm={onDeleteConfirmation} />

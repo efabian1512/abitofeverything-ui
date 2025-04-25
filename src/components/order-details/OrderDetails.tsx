@@ -30,7 +30,7 @@ const OrderDetails = () => {
              <StatusPill status={order?.statusInfo?.status} />
         </div>
       </div>
-      { isAdmin() && <Link className="btn btn-primary" to="/">Actualizar estado de la orden</Link> }
+      { isAdmin() && <Link className="btn btn-primary" to={`/admin/orders/status-update/${id}`}>Actualizar estado de la orden</Link> }
         </li>
         <li className="list-group-item border-info">
               <dl className="mb-2">
