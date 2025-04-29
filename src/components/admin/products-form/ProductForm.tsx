@@ -42,9 +42,6 @@ type FormData = z.infer<typeof schema>;
 
     const formValue = watch();
 
-    console.log('file', file);
-     console.log('current file', currentFile);
-
     useEffect(() =>  {
     if(id) {
         getProductInfo();
@@ -158,7 +155,6 @@ const getProductInfo = () => {
         let isFileEqual = true;
 
         if(formValue && currentFormValue) {
-            console.log('array2', Object.keys(currentFormValue))
             isFormEqual = Object.keys(currentFormValue).every(key => formValue[key as keyof typeof formValue] === currentFormValue[key]);
         }
 

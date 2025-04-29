@@ -1,18 +1,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { z } from "zod";
 import { useCountries } from "../../CustomHooks/useCountries";
-import { Order } from "../../models/Order";
-import { ShippingInfo } from "../../models/ShippingInfo";
-import { ShoppingCartInfo } from "../../models/ShoppingCartInfo";
-import { placeOrderService } from "../../services/OrderService";
-import { clearCartService } from "../../services/ShoppingCartService";
-import { getShoppingCartThunk } from "../../state/shopping-cart/shoppingCartSlice";
-import { AppDispatch, RootState } from "../../state/store";
+import { AppDispatch } from "../../state/store";
 import { setCountryFirst, sortCountries } from "../../Utilities";
+import { setCheckoutShippingInfo } from '../../state/checkout-shipping-info/CheckoutShippingInfoSlice';
+import { ShippingInfo } from "../../models/ShippingInfo";
 
 const ShippingForm = () => {
 
@@ -30,38 +25,35 @@ const ShippingForm = () => {
 
     type FormData = z.infer<typeof schema>;
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({resolver: zodResolver(schema) });
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({resolver: zodResolver(schema) });
     const dispatch = useDispatch<AppDispatch>();
-    
+
     const { data: countries } = useCountries();
-
-    const cart = useSelector((state: RootState) => state.cartInfo.cart);
-    const actualCart = cart ? new ShoppingCartInfo(cart.items, cart.id, cart.dateCreated) : null;
-
-
-   
-
-    const user = useSelector((state: RootState) => state.userInfo.user) || JSON.parse(localStorage.getItem('userInfo')!).user;
     
     const sortedCountries = setCountryFirst(countries?.sort(sortCountries)!, 'DOM');
 
-    const navigate = useNavigate();
 
-       const placeOrder = (data: FieldValues) => {
-       const order = new Order(user, data as ShippingInfo, actualCart);
-        
-        placeOrderService(order)
-            .then(resp => {
-                clearCartService().then(() => {
-                    dispatch(getShoppingCartThunk())
-                    reset();
-                    navigate(`/order-success/${resp.data.id}` )
-                });
-            })
-            .catch(error => error);
+    // useEffect(() => {
+    //     if(shippingInfo) {
+    //         setValue('addressLine1', shippingInfo.addressLine1);
+    //         setValue('addressLine2', shippingInfo.addressLine2);
+    //         setValue('city', shippingInfo.city);
+    //         setValue('country', shippingInfo.country);
+    //         setValue('customerName', shippingInfo.customerName);
+    //         setValue('phoneNumber', shippingInfo.phoneNumber);
+    //         setValue('zipCode', shippingInfo.zipCode);
+    //         setValue('state', shippingInfo.state);
+    //     }
+    // },[countries]);
+
+ 
+
+    const onSave = (data: FieldValues) => {
+          console.log(data);
+          dispatch(setCheckoutShippingInfo(data as ShippingInfo));
     }
 
- return  <form className="h-100" onSubmit={handleSubmit(placeOrder)}>
+ return  <form className="h-100" action={handleSubmit(onSave)}>
                 <div className="form-gropup mb-2">
                     <label htmlFor="customerName">Nombre Completo</label>
                     <input {...register('customerName')} type="text" id="customerName" className="form-control"/>

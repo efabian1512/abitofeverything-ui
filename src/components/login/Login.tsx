@@ -78,7 +78,7 @@ const [alertMessage, setAlertMessage] = useState<string>('');
   </div>
 {isLoading && <Loading/>}
 <div className="mt-3">
-  {alertMessage && <Alert message={alertMessage} />}
+  {alertMessage && <Alert type="error" message={alertMessage} />}
 </div>
 </form>
  </div>

@@ -44,8 +44,8 @@ export const removeFromCartService = async (product: Product) => {
   return updateItemQuantity(product, -1);
 }
 
-export const getActualCart = (cart: ShoppingCartInfo) => {
-    return new ShoppingCartInfo(cart.items, cart.id, cart.dateCreated);
+export const getActualCart = (cart: ShoppingCartInfo | null) => {
+    return cart ? new ShoppingCartInfo(cart.items, cart.id, cart.dateCreated) : null;
 }
 
 export const clearCartService = async () => {

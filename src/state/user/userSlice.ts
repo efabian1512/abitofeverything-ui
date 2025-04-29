@@ -4,23 +4,23 @@ import { User } from '../../models/User';
 
 
 export interface UserState {
-    user: User | null
+    loggedUser: User | null
 }
 
 const initialState: UserState = {
-    user: null
+    loggedUser: null
 };
 
 
 const userSlice = createSlice({
-    name:'user',
+    name:'loggedUser',
     initialState,
     reducers: {
         setUser: (state, action: PayloadAction<User>) => {
-            state.user = action.payload
+            state.loggedUser = action.payload
         },
         removeUser:(state) => {
-            state.user = initialState.user
+            state.loggedUser = initialState.loggedUser
         }
     }
 });

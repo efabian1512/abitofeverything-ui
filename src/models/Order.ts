@@ -6,9 +6,11 @@ export class Order {
     datePlaced: number;
     items: any[] = [];
     total: number = 0;
+    paymentId: string | null;
 
-    constructor(public user: User | null, public shippingInfo: ShippingInfo, shoppingCart: ShoppingCartInfo | null) {
+    constructor(public user: User | null, public shippingInfo: ShippingInfo | null, shoppingCart: ShoppingCartInfo | null, paymentId: string | null) {
         this.datePlaced = new Date().getTime();
+        this.paymentId = paymentId;
 
       this.items = shoppingCart ?  shoppingCart?.items.map(item => {
                 return {

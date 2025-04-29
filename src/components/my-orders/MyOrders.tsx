@@ -1,16 +1,17 @@
 import './MyOrders.css';
 import { useEffect, useState } from 'react';
 import { getOrdersByUserId } from '../../services/OrderService';
-import { getLoggedUser } from '../../services/UserService';
 import { getSpanishFormattedDateByNumericDate, formatPrice } from '../../Utilities';
 import { sortByDateDesc } from '../../services/UtilsSetrvice';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/store';
 
 const MyOrders = () => {
-const [orders, setOrders] = useState<any>();
+    const [orders, setOrders] = useState<any>();
+    const user =  useSelector((state: RootState) => state.userInfo.loggedUser);
 
     useEffect(() => {
-      const user =  getLoggedUser();
       const userId = user ? user.id : '';
         getOrdersByUserId(userId).then(resp => setOrders(resp?.data?.sort(sortByDateDesc)));
     },[]);

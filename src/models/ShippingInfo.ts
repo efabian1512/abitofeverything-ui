@@ -1,6 +1,6 @@
 export interface ShippingInfo {
-    id: string;
-	ustomerName: string;
+    id?: string;
+	customerName: string;
     addressLine1: string;
 	addressLine2: string;
     city: string;

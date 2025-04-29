@@ -24,18 +24,21 @@ const navigate = useNavigate();
     const [currentStatusValue, setCurrentStatusValue] = useState<string>('');
 
     useEffect(() => {
-        getOrderStatusList().then(resp => {setStatusList(resp.data)}).catch(error => error);
+        getOrderStatusList().then(resp => {
+            setStatusList(resp.data);
+            getOrder();
+        }).catch(error => error);
     }, []);
 
-    useEffect(() => {
-         if(id) {
+    const getOrder = () => {
+        if(id) {
             getOrderById(id).then(resp => 
                 {
                     setCurrentStatusValue(resp.data.statusInfo.id);
                     setValue('status', resp?.data?.statusInfo.id);
                 });
         }
-    },[id]);
+    }
 
     const getStatus = () => {
       const status =  statusList?.find((status: any ) => status.id === statusFieldValue);
