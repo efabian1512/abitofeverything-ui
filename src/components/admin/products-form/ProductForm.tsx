@@ -44,9 +44,11 @@ type FormData = z.infer<typeof schema>;
 
     useEffect(() =>  {
     if(id) {
-        getProductInfo();
+        if(categories) {
+             getProductInfo();
+        }
     }
-}, []);
+}, [categories]);
 
 const checkFileType = (file: File) => {
     if(file?.name){
