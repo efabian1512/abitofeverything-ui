@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { useForm, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { deleteProductById, getProductById, saveProduct } from './ProductService';
-import useProductCategories from '../../../CustomHooks/ProductCategories';
+import useProductCategories from '../../../CustomHooks/useProductCategories';
 import { useState, useEffect, act } from 'react';
 import ProductCard from '../../card/ProductCard';
 import './ProductForm.css';

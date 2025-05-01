@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useProductCategories from "../../../CustomHooks/ProductCategories";
+import useProductCategories from "../../../CustomHooks/useProductCategories";
 import { sortCategories } from "../../../services/UtilsSetrvice";
 import styles from './Product.module.css';
 
