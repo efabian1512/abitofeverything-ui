@@ -8,6 +8,7 @@ import ProductQuantity from '../product-quantity/ProductQuantity';
 import { ShoppingCartItem } from '../../models/ShoppingCartItem';
 import { formatPrice } from '../../Utilities';
 import { useEffect, useState } from 'react';
+import useScreenSize from '../../CustomHooks/useScreenSize';
 
 interface CardProps {
     product: Product
@@ -28,7 +29,8 @@ const ProductCard = ({ cardInfo, showActions = false }: CardInfo) => {
    const actualCart = cart ? getActualCart(cart) : null;
 
   const item: ShoppingCartItem | undefined = actualCart?.items.find(item => item.productId === cardInfo.product.id);
-  const [screenWidth, setScreenWidth] = useState<number>(0);
+  
+  const { screenWidth } = useScreenSize();
    
 const addToCart = () => {
   addToCartService({...cardInfo.product, productImage: null}).then(() => {
@@ -36,15 +38,9 @@ const addToCart = () => {
   }).catch((error) => error);
 }
 
-useEffect(() => {
-  window.addEventListener('resize', (event) => {
-    setScreenWidth(window.innerWidth);
-  });
-},[]);
-
     return cardInfo?.product?.title ? <div className={`card p-3 bg-light mb-5 ${styles['product-card']}`}>
-  {cardInfo.product.productImage && window.innerWidth < 768 && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className={`card-img-top ${styles['product-image']}`} alt={cardInfo?.product.title}/>}
-  {cardInfo.product.productImage && window.innerWidth >= 768 && <div className={styles['product-image-div']} style={{backgroundImage: 'url('+cardInfo?.product?.productImage+')'}} ></div>}
+  {cardInfo.product.productImage && screenWidth < 768 && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className={`card-img-top ${styles['product-image']}`} alt={cardInfo?.product.title}/>}
+  {cardInfo.product.productImage && screenWidth >= 768 && <div className={styles['product-image-div']} style={{backgroundImage: 'url('+cardInfo?.product?.productImage+')'}} ></div>}
   
   
   <div className="card-body">
