@@ -4,6 +4,7 @@ import { getShoppingCartThunk } from "../../state/shopping-cart/shoppingCartSlic
 import { AppDispatch } from "../../state/store";
 import { ShoppingCartItem } from '../../models/ShoppingCartItem';
 import { Product } from "../../models/Product";
+import './ProductQuantity.css';
 
 const ProductQuantity = ({ item, product }: {item: ShoppingCartItem, product: Product }) => {
  const dispatch = useDispatch<AppDispatch>();
@@ -20,14 +21,14 @@ const removeFromCart = () => {
   }).catch((error) => error);
 }
 
- return <div className="row g-0">
-        <div className="col-2">
+ return <div className="product-quantity">
+        <div>
             <button onClick={removeFromCart} className="btn btn-secondary w-100 ">-</button>
         </div>
-        <div className="col text-center align-self-center">
+        <div className="text-center align-self-center">
             { item.quantity } en el carrito 
         </div>
-        <div className="col-2">
+        <div>
             <button onClick={addToCart} className="btn btn-secondary w-100 ">+</button>
         </div>
         </div>

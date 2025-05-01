@@ -7,6 +7,7 @@ import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlic
 import ProductQuantity from '../product-quantity/ProductQuantity';
 import { ShoppingCartItem } from '../../models/ShoppingCartItem';
 import { formatPrice } from '../../Utilities';
+import { useEffect, useState } from 'react';
 
 interface CardProps {
     product: Product
@@ -27,6 +28,7 @@ const ProductCard = ({ cardInfo, showActions = false }: CardInfo) => {
    const actualCart = cart ? getActualCart(cart) : null;
 
   const item: ShoppingCartItem | undefined = actualCart?.items.find(item => item.productId === cardInfo.product.id);
+  const [screenWidth, setScreenWidth] = useState<number>(0);
    
 const addToCart = () => {
   addToCartService({...cardInfo.product, productImage: null}).then(() => {
@@ -34,15 +36,22 @@ const addToCart = () => {
   }).catch((error) => error);
 }
 
-    return cardInfo?.product?.title ? <div className="card">
-  {cardInfo.product.productImage && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className="card-img-top" alt={cardInfo?.product.title}/>}
-  {/* {cardInfo.product.productImage && <div className={styles['producs-product-image']} style={{backgroundImage: 'url('+cardInfo?.product?.productImage+')'}} ></div>} */}
+useEffect(() => {
+  window.addEventListener('resize', (event) => {
+    setScreenWidth(window.innerWidth);
+  });
+},[]);
+
+    return cardInfo?.product?.title ? <div className={`card p-3 bg-light mb-5 ${styles['product-card']}`}>
+  {cardInfo.product.productImage && window.innerWidth < 768 && <img style={{objectFit: cardInfo.width ? 'none' : 'cover'}}  src={cardInfo?.product.productImage } className={`card-img-top ${styles['product-image']}`} alt={cardInfo?.product.title}/>}
+  {cardInfo.product.productImage && window.innerWidth >= 768 && <div className={styles['product-image-div']} style={{backgroundImage: 'url('+cardInfo?.product?.productImage+')'}} ></div>}
+  
   
   <div className="card-body">
     <h5 className="card-title">{cardInfo?.product?.title}</h5>
     <p className="card-text">{ formatPrice(cardInfo?.product?.price)}</p>
   </div>
-  {showActions && <div className={`card-footer ${styles['padding-0']}`}>
+  {showActions && <div className={`card-footer border-0 ${styles['padding-0']}`}>
       
       { !item?.quantity ?  <button onClick={() => addToCart()} className="btn btn-secondary w-100">Agregar al carrito</button> 
       : <ProductQuantity item={item} product={cardInfo.product} />

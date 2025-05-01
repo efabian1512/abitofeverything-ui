@@ -62,6 +62,16 @@ const Navbar = () => {
                 <span className="badge rounded-pill bg-warning text-dark ms-1">{actualCart?.totalItemsCount}</span>
                 </NavLink>
           </li>
+           <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
+              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>Filtar por categoria</a>
+              <div onMouseLeave={() => setIsDropdownExpanded(false)} className={`dropdown-menu ${isDropdownExpanded ? ' show not-hover' :''}`}>
+                <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
+                { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
+                  {<Link className="dropdown-item clickable" to="/admin/orders">Administrar Ordenes</Link>}
+                  <Link className="dropdown-item clickable" to="/admin/products">Administrar Productos</Link></>}
+                  <a onClick={logout} className="dropdown-item clickable">Cerrar sesión</a>
+              </div>
+          </li>
         </ul>
         <ul className="d-flex align-items-center navbar-nav mb-2 mb-md-0">
           { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
