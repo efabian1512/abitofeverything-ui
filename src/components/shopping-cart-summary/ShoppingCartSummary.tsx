@@ -6,7 +6,7 @@ import { getActualCart } from "../../services/ShoppingCartService";
 const ShoppingCartSummary = () => {
     const cart = useSelector((state: RootState) => state.cartInfo.cart);
 
-    const actualCart = cart ? getActualCart(cart) : null;
+    const actualCart = getActualCart(cart);
 
     return <div className="card">
   <div className="card-body">

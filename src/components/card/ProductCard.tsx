@@ -7,7 +7,6 @@ import { getShoppingCartThunk } from '../../state/shopping-cart/shoppingCartSlic
 import ProductQuantity from '../product-quantity/ProductQuantity';
 import { ShoppingCartItem } from '../../models/ShoppingCartItem';
 import { formatPrice } from '../../Utilities';
-import { useEffect, useState } from 'react';
 import useScreenSize from '../../CustomHooks/useScreenSize';
 
 interface CardProps {
@@ -26,7 +25,7 @@ const ProductCard = ({ cardInfo, showActions = false }: CardInfo) => {
    const dispatch = useDispatch<AppDispatch>();
 
    const cart = useSelector((state: RootState) => state.cartInfo.cart);
-   const actualCart = cart ? getActualCart(cart) : null;
+   const actualCart = getActualCart(cart);
 
   const item: ShoppingCartItem | undefined = actualCart?.items.find(item => item.productId === cardInfo.product.id);
   

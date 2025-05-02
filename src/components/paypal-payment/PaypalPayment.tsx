@@ -14,8 +14,8 @@ const PaypalPayment = ({isShippingFormValid}: {isShippingFormValid: boolean}) =>
             const payload: PaypalPaymentRequest = {
                 amount: actualCart?.totalPrice ? actualCart?.totalPrice  : 0,
                 description: "Compra de algunos productos de Abitofeverything shop.",
-                cancelUrl: window?.location?.hostname?.toLowerCase() === 'localhost' ? 'http://'+window?.location.hostname+':'+window.location.port+'/check-out' : window?.location.hostname+'/check-out',
-                successUrl: window?.location?.hostname?.toLowerCase() === 'localhost' ? 'http://'+window?.location.hostname+':'+window.location.port+'/order-success' : window?.location.hostname+'/order-success'
+                cancelUrl: `${window.location.origin}/check-out`,
+                successUrl: `${window.location.origin}/order-success`
             }
              const resp = await performPaypalPayment(payload);
              const url = resp?.data?.replace('Redirect to: ','').trim();

@@ -21,7 +21,7 @@ const Navbar = () => {
 
   const cart = useSelector((state: RootState) => state.cartInfo.cart);
  
- const actualCart = cart ? getActualCart(cart) : null;
+ const actualCart = getActualCart(cart);
 
   useEffect(() => {
     setIsDropdownExpanded(false);

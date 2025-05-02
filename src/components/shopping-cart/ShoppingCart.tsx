@@ -15,7 +15,7 @@ const ShoppingCart = () => {
 
 const cart = useSelector((state: RootState) => state.cartInfo.cart);
  
- const actualCart = cart ? getActualCart(cart) : null;
+ const actualCart = getActualCart(cart);
  const [products, setProducts] = useState([]);
  const [isCleartCartModalOpen, setIsCleartCartModalOpen] = useState<boolean>(false);
 

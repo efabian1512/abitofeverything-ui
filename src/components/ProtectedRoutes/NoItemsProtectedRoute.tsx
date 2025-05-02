@@ -10,7 +10,7 @@ type ProtectedRouteProps = PropsWithChildren;
 const NoItemsProtectedRoute = ({ children }: ProtectedRouteProps) => {
  
     const cart = useSelector((state: RootState) => state.cartInfo.cart);
-    const actualCart = cart ? getActualCart(cart) : null;
+    const actualCart = getActualCart(cart);
 
     const navigate = useNavigate();
 

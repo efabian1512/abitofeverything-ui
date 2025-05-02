@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './OrderSuccess';
-import { Link, useParams, useSearchParams, useLocation } from 'react-router-dom';
+import { Link, useSearchParams, } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../state/store';
 import { Order } from '../../models/Order';
@@ -20,17 +20,17 @@ const OrderSuccess = () => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const actualCart = getActualCart(cart);
     const dispatch = useDispatch<AppDispatch>();
-    // const { PayerID } = useParams();
-
     const [searchParams] = useSearchParams();
+    const paymentId = searchParams.get('paymentId');
+    const payerId = searchParams.get('PayerID');
+    const paymentIntent = searchParams.get('payment_intent');
  
       const placeOrder = () => {
-       const paymentId = searchParams.get('paymentId');
-       const payerId = searchParams.get('PayerID');
-       const order = new Order(user, shippingInfo, actualCart, paymentId);
+        
+        const paymentIdLocal = paymentId ? paymentId : paymentIntent;
 
-       executePayment(paymentId, payerId).then((resp) => {
-            if(resp) {
+         const order = new Order(user, shippingInfo, actualCart, paymentIdLocal);
+
         placeOrderService(order)
             .then(resp => {
                 setOrderId(resp?.data?.data?.id);
@@ -41,16 +41,29 @@ const OrderSuccess = () => {
                 });
             })
             .catch((error: AxiosError<any, any>) => setErrorMessage(error.response?.data?.message));
+      }
+      
+   
+      const placePaypalOrder = () => {
+
+       executePayment(paymentId, payerId).then((resp) => {
+            if(resp) {
+                placeOrder();
             }
         }).catch(error => setErrorMessage(error.response?.data?.message));;
       
     }
     
     useEffect(() => {
-       placeOrder();
-    },[]);    
+     if(paymentId && payerId) {
+         placePaypalOrder();
+     } else {
+         if(paymentIntent) {
+            placeOrder();
+         }
+     }
+    },[payerId, paymentId]);
 
-    //const { id } = useParams();
  return (
      <>
          { orderId && <div className="d-flex align-items-center h-100"><div className="alert alert-success" role="alert">¡Esta orden se completo satisfactoriamente! El ID de la orden es <Link className="text-decoration-none" to={"/order/details/"+orderId}>{orderId}</Link> , puede dar click en el ID para ver los detalles de la orden. </div></div>}
@@ -59,7 +72,6 @@ const OrderSuccess = () => {
              <Link className="align-self-center text-decoration-none" to="/">Ver mas productos.</Link>
          </div>}
      </>
-    
  )
 }
 
