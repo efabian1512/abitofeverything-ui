@@ -9,10 +9,14 @@ import { RootState } from '../../state/store';
 import { getActualCart } from '../../services/ShoppingCartService';
 import { useDispatch } from 'react-redux';
 import { removeUser } from '../../state/user/userSlice';
+import ProductFilter from '../products/products-filter/ProductsFilter';
 
 const Navbar = () => {
-  const [isDropdownExpanded, setIsDropdownExpanded] = useState<boolean>(false);
+  const [isUserDropdownExpanded, setIsUserDropdownExpanded] = useState<boolean>(false);
+  const [isCategoryDropdownExpanded, setIsCategoryDropdownExpanded] = useState<boolean>(false);
+  const [isPriceDropdownExpanded, setIsPriceDropdownExpanded] = useState<boolean>(false);
   const [isAUserRouteActive, setIsAUserRouteActive,] = useState<boolean>(false);
+  const [isACategoryFilterAtive, setIsCategoryFilterActive] = useState<boolean>(false);
 
   const [userInfo, setUserInfo] = useState<any>(null);
   const location = useLocation();
@@ -24,14 +28,15 @@ const Navbar = () => {
  const actualCart = getActualCart(cart);
 
   useEffect(() => {
-    setIsDropdownExpanded(false);
+    setIsUserDropdownExpanded(false);
     setUserInfo(JSON.parse(localStorage.getItem('userInfo')!));
   }, []);
 
   useEffect(()=> {
     const userRoutes = ["/my/orders", "/admin/orders", "/admin/products"];
+    setIsCategoryFilterActive(location?.search?.includes('category'));
     setIsAUserRouteActive(userRoutes.includes(location.pathname));
-    setIsDropdownExpanded(false);
+    setIsUserDropdownExpanded(false);
   }, [location]);
 
   const logout = () => {
@@ -45,7 +50,11 @@ const Navbar = () => {
     }).catch((error) => error);
   }
 
-
+  const hideDropdowns = () => {
+    setIsUserDropdownExpanded(false);
+    setIsCategoryDropdownExpanded(false);
+    setIsPriceDropdownExpanded(false);
+  }
     return  <nav className="navbar navbar-expand-md navbar-light bg-light">
         <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">
@@ -57,14 +66,30 @@ const Navbar = () => {
       <div className="collapse navbar-collapse" id="navbarCollapse">
         <ul className="navbar-nav me-auto mb-2 mb-md-0">
           <li className="nav-item">
-              <NavLink onClick={() => setIsDropdownExpanded(false)} className="nav-link"  to="/shopping-cart">
+              <NavLink onClick={() =>  hideDropdowns} className="nav-link"  to="/shopping-cart">
                 {location.pathname === '/shopping-cart' ? <i title={'Carrito'} className="bi bi-cart-fill"></i> : <i className="bi bi-cart"></i>}
                 <span className="badge rounded-pill bg-warning text-dark ms-1">{actualCart?.totalItemsCount}</span>
                 </NavLink>
           </li>
-           <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
-              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>Filtar por categoria</a>
-              <div onMouseLeave={() => setIsDropdownExpanded(false)} className={`dropdown-menu ${isDropdownExpanded ? ' show not-hover' :''}`}>
+         { location.pathname === '/' && <>
+           <li style={{zIndex: 111111}} className={`nav-item dropdown ${isCategoryDropdownExpanded ? ' show' :''}`}>
+              <a onClick={() => {
+                setIsCategoryDropdownExpanded(!isCategoryDropdownExpanded);
+                setIsUserDropdownExpanded(false);
+                setIsPriceDropdownExpanded(false);
+                }} className={`nav-link dropdown-toggle ${isACategoryFilterAtive ? ' active' : ''}`}>Filtar por categoria</a>
+              <div onMouseLeave={() => setIsCategoryDropdownExpanded(false)} className={`dropdown-menu ${isCategoryDropdownExpanded ? ' show not-hover' :''}`}>
+                <ProductFilter/>
+              </div>
+          </li>
+
+           <li style={{zIndex: 111111}} className={`nav-item dropdown ${isPriceDropdownExpanded ? ' show' :''}`}>
+              <a onClick={() => {
+                setIsPriceDropdownExpanded(!isPriceDropdownExpanded);
+                setIsCategoryDropdownExpanded(false);
+                setIsUserDropdownExpanded(false);
+                }} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>Filtar por rango de precio</a>
+              <div onMouseLeave={() => setIsPriceDropdownExpanded(false)} className={`dropdown-menu ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
                 <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
                   {<Link className="dropdown-item clickable" to="/admin/orders">Administrar Ordenes</Link>}
@@ -72,11 +97,16 @@ const Navbar = () => {
                   <a onClick={logout} className="dropdown-item clickable">Cerrar sesión</a>
               </div>
           </li>
+          </>}
         </ul>
         <ul className="d-flex align-items-center navbar-nav mb-2 mb-md-0">
-          { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isDropdownExpanded ? ' show' :''}`}>
-              <a onClick={() => setIsDropdownExpanded(!isDropdownExpanded)} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.user?.email}</a>
-              <div onMouseLeave={() => setIsDropdownExpanded(false)} className={`dropdown-menu ${isDropdownExpanded ? ' show not-hover' :''}`}>
+          { userInfo && <li style={{zIndex: 111111}} className={`nav-item dropdown ${isUserDropdownExpanded ? ' show' :''}`}>
+              <a onClick={() => {
+                setIsUserDropdownExpanded(!isUserDropdownExpanded);
+                setIsPriceDropdownExpanded(false);
+                setIsCategoryDropdownExpanded(false);
+                }} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>{userInfo?.user?.email}</a>
+              <div onMouseLeave={() => setIsUserDropdownExpanded(false)} className={`dropdown-menu ${isUserDropdownExpanded ? ' show not-hover' :''}`}>
                 <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
                   {<Link className="dropdown-item clickable" to="/admin/orders">Administrar Ordenes</Link>}

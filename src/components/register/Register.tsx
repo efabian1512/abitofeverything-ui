@@ -74,7 +74,7 @@ const [isLoading, setIsloading] = useState<boolean>(false);
                                                     <div> {errors.confirmPassword?.message}</div></div> }
   </div>
   <button className={`btn btn-primary me-3 ` + registerStyles['create-button']} type='submit'>Crear</button>
-{isLoading && <Loading/>}
+  {isLoading && <Loading backDrop={false} wholePage={false}/>}
 </form>
  </div>
 }

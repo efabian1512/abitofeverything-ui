@@ -76,7 +76,7 @@ const [alertMessage, setAlertMessage] = useState<string>('');
   <div className="mt-2">
     <p> <span className="me-2">¿No tienes una cuenta?</span><Link className="text-decoration-none" to="/register">Registrate</Link></p>
   </div>
-{isLoading && <Loading/>}
+{isLoading && <Loading backDrop={false} wholePage={false}/>}
 <div className="mt-3">
   {alertMessage && <Alert type="error" message={alertMessage} />}
 </div>

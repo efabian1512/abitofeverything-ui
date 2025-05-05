@@ -8,6 +8,7 @@ import { AppDispatch } from "../../state/store";
 import { setCountryFirst, sortCountries } from "../../Utilities";
 import { setCheckoutShippingInfo } from '../../state/checkout-shipping-info/CheckoutShippingInfoSlice';
 import { ShippingInfo } from "../../models/ShippingInfo";
+import Loading from "../Loading/Loading";
 
 const ShippingForm = () => {
 
@@ -28,7 +29,7 @@ const ShippingForm = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({resolver: zodResolver(schema) });
     const dispatch = useDispatch<AppDispatch>();
 
-    const { data: countries } = useCountries();
+    const { data: countries, isLoading } = useCountries();
     
     const sortedCountries = setCountryFirst(countries?.sort(sortCountries)!, 'DOM');
 
@@ -117,6 +118,7 @@ const ShippingForm = () => {
                     </div> }
                 </div>
                   <button className="btn btn-primary" type="submit">Guardar</button>
+                  {isLoading && <Loading />}
                      </form>
 }
 

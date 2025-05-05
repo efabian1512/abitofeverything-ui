@@ -11,9 +11,12 @@ import { executePayment } from '../paypal-payment/paypalservice';
 import Alert from '../alerts/Alert';
 import { AxiosError } from 'axios';
 import { removeCheckoutShippingInfo } from '../../state/checkout-shipping-info/CheckoutShippingInfoSlice';
+import Loading from '../Loading/Loading';
+
 
 const OrderSuccess = () => {
     const [orderId, setOrderId] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.userInfo.loggedUser);
     const shippingInfo = useSelector((state: RootState) => state.checkOutShippingInfo.shippingInfo);
     const cart = useSelector((state: RootState) => state.cartInfo.cart);
@@ -33,14 +36,20 @@ const OrderSuccess = () => {
 
         placeOrderService(order)
             .then(resp => {
+                console.log('order');
                 setOrderId(resp?.data?.data?.id);
 
                 clearCartService().then(() => {
                     dispatch(getShoppingCartThunk());
                     dispatch(removeCheckoutShippingInfo());
+                      setIsLoading(false);
                 });
             })
-            .catch((error: AxiosError<any, any>) => setErrorMessage(error.response?.data?.message));
+            .catch((error: AxiosError<any, any>) => {
+                setIsLoading(false);
+                setErrorMessage(error.response?.data?.message);
+                
+            });
       }
       
    
@@ -50,11 +59,15 @@ const OrderSuccess = () => {
             if(resp) {
                 placeOrder();
             }
-        }).catch(error => setErrorMessage(error.response?.data?.message));;
+        }).catch(error => {
+            setErrorMessage(error.response?.data?.message);
+            setIsLoading(false);
+        });;
       
     }
     
     useEffect(() => {
+        setIsLoading(true);
      if(paymentId && payerId) {
          placePaypalOrder();
      } else {
@@ -66,11 +79,18 @@ const OrderSuccess = () => {
 
  return (
      <>
-         { orderId && <div className="d-flex align-items-center h-100"><div className="alert alert-success" role="alert">¡Esta orden se completo satisfactoriamente! El ID de la orden es <Link className="text-decoration-none" to={"/order/details/"+orderId}>{orderId}</Link> , puede dar click en el ID para ver los detalles de la orden. </div></div>}
+         { !errorMessage && orderId && <div className="d-flex align-items-center justify-content-center h-100">
+             <div style={{height: '60%', maxWidth: '800px'}} className="alert alert-light border border-success border-5 d-flex align-items-center" role="alert">
+                 <div className="d-flex gap-2">
+                     <i className="bi bi-check-circle-fill text-success"></i>
+                     <div>¡Esta orden se completo satisfactoriamente! El ID de la orden es <Link className="text-decoration-none text-success" to={"/order/details/"+orderId}>{orderId}</Link> , puede dar click en el ID para ver los detalles de la orden o <Link className="align-self-center text-decoration-none text-success" to="/">click aqui para ver mas productos.</Link></div></div> 
+                     </div>
+                     </div>}
          {errorMessage && <div className="d-flex flex-column justify-content-center h-100">
              <Alert textCenter={true} type='error' message={errorMessage} />
              <Link className="align-self-center text-decoration-none" to="/">Ver mas productos.</Link>
          </div>}
+         {isLoading && <Loading/>}
      </>
  )
 }

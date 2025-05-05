@@ -13,6 +13,9 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import StripeCheckoutForm from '../stripe-payment/StripeCheckOutForm';
 import { PaymentMethods } from '../../enums/payment-methods';
+import Loading from '../Loading/Loading';
+
+
 
 const Checkout = () => {
     const shippingInfo = useSelector((state: RootState) => state.checkOutShippingInfo.shippingInfo);
@@ -55,6 +58,7 @@ const Checkout = () => {
                         PayPal
                     </label>
                    { paymentMethod === PaymentMethods.PAYPAL && <PaypalPayment isShippingFormValid={shippingInfo ? true : false} /> }
+                   {/* <PayPal/> */}
                 </div>
                     <div className="form-check">
                         <input disabled={!shippingInfo ? true : false}  onChange={onPaymentMethodChange}  className="form-check-input" type="radio" name="paymentMethod" id="cardMethod" value="card"/>
@@ -67,7 +71,7 @@ const Checkout = () => {
                     </div>
             </div>
             
-        </div>           
+        </div>         
     </div>
 }
 
