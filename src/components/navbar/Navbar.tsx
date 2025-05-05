@@ -10,6 +10,7 @@ import { getActualCart } from '../../services/ShoppingCartService';
 import { useDispatch } from 'react-redux';
 import { removeUser } from '../../state/user/userSlice';
 import ProductFilter from '../products/products-filter/ProductsFilter';
+import PriceFilter from '../price-filter/PriceFilter';
 
 const Navbar = () => {
   const [isUserDropdownExpanded, setIsUserDropdownExpanded] = useState<boolean>(false);
@@ -17,7 +18,7 @@ const Navbar = () => {
   const [isPriceDropdownExpanded, setIsPriceDropdownExpanded] = useState<boolean>(false);
   const [isAUserRouteActive, setIsAUserRouteActive,] = useState<boolean>(false);
   const [isACategoryFilterAtive, setIsCategoryFilterActive] = useState<boolean>(false);
-
+ 
   const [userInfo, setUserInfo] = useState<any>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -89,12 +90,13 @@ const Navbar = () => {
                 setIsCategoryDropdownExpanded(false);
                 setIsUserDropdownExpanded(false);
                 }} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>Filtar por rango de precio</a>
-              <div onMouseLeave={() => setIsPriceDropdownExpanded(false)} className={`dropdown-menu ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
-                <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
+              <div onMouseLeave={() => setIsPriceDropdownExpanded(false)} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
+                <PriceFilter />
+                {/* <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
                   {<Link className="dropdown-item clickable" to="/admin/orders">Administrar Ordenes</Link>}
                   <Link className="dropdown-item clickable" to="/admin/products">Administrar Productos</Link></>}
-                  <a onClick={logout} className="dropdown-item clickable">Cerrar sesión</a>
+                  <a onClick={logout} className="dropdown-item clickable">Cerrar sesión</a> */}
               </div>
           </li>
           </>}
