@@ -14,15 +14,43 @@ const Products = () => {
     //      setMyParams({category});
     //   }
 
-    const applyFilter = () => {
-        const query = myParams.get('category');
-        const filteredProductsLocal = query ? products.filter((product:any) => product?.category?.categoryName?.toLowerCase().replace(' ', '') === query) : products;
+    const applyFilters = () => {
+
+        let filteredProductsLocal  = products;
+
+        if(myParams.get('category')) {
+            const query = myParams.get('category');
+           filteredProductsLocal = query ? filteredProductsLocal.filter((product:any) => product?.category?.categoryName?.toLowerCase().replace(' ', '') === query) : filteredProductsLocal;
+        }
+
+        if(myParams.get('desde')) {
+            const query = myParams.get('desde');
+
+            filteredProductsLocal = query ? filteredProductsLocal.filter((product:any) => product?.price >= parseFloat(query)) : filteredProductsLocal;
+        }
+
+        if(myParams.get('hasta')) {
+            const query = myParams.get('hasta');
+
+            filteredProductsLocal = query ? filteredProductsLocal.filter((product:any) => product?.price <= parseFloat(query)) : filteredProductsLocal;
+        }
+
+        // const query = myParams.get('category');
+        // filteredProductsLocal = query ? products.filter((product:any) => product?.category?.categoryName?.toLowerCase().replace(' ', '') === query) : products;
         setFilteredProducts(filteredProductsLocal);
     }
 
+    // const getFilteredProducts = (productsLocal: any[], query: string, valueProperty: string) => {
+
+    //     if(valueProperty?.toLowerCase() === 'desde') {
+
+    //     }
+    //     query ? productsLocal.filter((product:any) => product?.category?.categoryName?.toLowerCase().replace(' ', '') === query) : products;
+    // }
+
     const populateProducts = () => {
-        getProducts().then((products) => {
-            setProducts(products.data);
+        getProducts().then((resp) => {
+            setProducts(resp.data);
         }).catch((error) => error);
     }
 
@@ -31,7 +59,7 @@ const Products = () => {
     }, []);
 
     useEffect(() => {
-        applyFilter()
+        applyFilters();
     }, [myParams, products]);
 
  

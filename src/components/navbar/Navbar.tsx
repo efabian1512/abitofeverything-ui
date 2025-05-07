@@ -17,7 +17,8 @@ const Navbar = () => {
   const [isCategoryDropdownExpanded, setIsCategoryDropdownExpanded] = useState<boolean>(false);
   const [isPriceDropdownExpanded, setIsPriceDropdownExpanded] = useState<boolean>(false);
   const [isAUserRouteActive, setIsAUserRouteActive,] = useState<boolean>(false);
-  const [isACategoryFilterAtive, setIsCategoryFilterActive] = useState<boolean>(false);
+  const [isACategoryFilterActive, setIsCategoryFilterActive] = useState<boolean>(false);
+  const [isAPriceFilterActive, setIsAPriceFilterActive] = useState<boolean>(false);
  
   const [userInfo, setUserInfo] = useState<any>(null);
   const location = useLocation();
@@ -36,6 +37,8 @@ const Navbar = () => {
   useEffect(()=> {
     const userRoutes = ["/my/orders", "/admin/orders", "/admin/products"];
     setIsCategoryFilterActive(location?.search?.includes('category'));
+    setIsPriceDropdownExpanded(false);
+    setIsAPriceFilterActive(location.search.includes('desde') || location.search.includes('hasta'));
     setIsAUserRouteActive(userRoutes.includes(location.pathname));
     setIsUserDropdownExpanded(false);
   }, [location]);
@@ -78,7 +81,7 @@ const Navbar = () => {
                 setIsCategoryDropdownExpanded(!isCategoryDropdownExpanded);
                 setIsUserDropdownExpanded(false);
                 setIsPriceDropdownExpanded(false);
-                }} className={`nav-link dropdown-toggle ${isACategoryFilterAtive ? ' active' : ''}`}>Filtar por categoria</a>
+                }} className={`nav-link dropdown-toggle ${isACategoryFilterActive ? ' active' : ''}`}>Filtar por categoria</a>
               <div onMouseLeave={() => setIsCategoryDropdownExpanded(false)} className={`dropdown-menu ${isCategoryDropdownExpanded ? ' show not-hover' :''}`}>
                 <ProductFilter/>
               </div>
@@ -89,8 +92,8 @@ const Navbar = () => {
                 setIsPriceDropdownExpanded(!isPriceDropdownExpanded);
                 setIsCategoryDropdownExpanded(false);
                 setIsUserDropdownExpanded(false);
-                }} className={`nav-link dropdown-toggle ${isAUserRouteActive ? ' active' : ''}`}>Filtar por rango de precio</a>
-              <div onMouseLeave={() => setIsPriceDropdownExpanded(false)} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
+                }} className={`nav-link dropdown-toggle ${isAPriceFilterActive ? ' active' : ''}`}>Filtar por rango de precio</a>
+              <div onMouseLeave={() => setIsPriceDropdownExpanded(false)} style={{width: '400px'}} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
                 <PriceFilter />
                 {/* <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>

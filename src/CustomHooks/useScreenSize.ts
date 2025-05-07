@@ -3,9 +3,15 @@ import { useEffect, useState } from "react";
 const useScreenSize = () => {
 const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
     useEffect(() => {
-  window.addEventListener('resize', (event) => {
-    setScreenWidth(window.innerWidth);
-  });
+    const resizeListener = (event: UIEvent) => {
+       setScreenWidth(window.innerWidth);
+    }
+    
+  window.addEventListener('resize', resizeListener);
+
+  return () => {
+    document.removeEventListener('resize', resizeListener);
+  }
 },[]);
     return { screenWidth };
 }

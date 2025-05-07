@@ -10,10 +10,14 @@ const ProductFilter = () => {
      const [currentCategory, setCurrentCategory] = useState<string | null>('');
 
      const onCategoryChange = (category?: string) => {
-       
+        let myParamsLocal: any = {...myParams};
+        myParamsLocal = myParams.get('desde') ? {...myParamsLocal, desde: myParams.get('desde')} : {...myParamsLocal};
+        myParamsLocal = myParams.get('hasta') ? {...myParamsLocal, hasta: myParams.get('hasta')} : {...myParamsLocal};
+
          if(category) {
               setCurrentCategory(category);
-             setMyParams({category});
+                myParamsLocal = { category, ...myParamsLocal};
+             setMyParams(myParamsLocal);
          } else {
              myParams.delete('category');
              setMyParams(myParams);
@@ -23,7 +27,7 @@ const ProductFilter = () => {
 
      useEffect(() => {
         setCurrentCategory(myParams?.get('category') ? myParams?.get('category') : '')
-     },[])
+     },[]);
 
  return (<>
     <div onClick={() => onCategoryChange()} className={`dropdown-item clickable ${currentCategory === '' ? 'active border' : ''}`}>Todas las categorias</div>
