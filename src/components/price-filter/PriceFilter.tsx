@@ -25,8 +25,6 @@ type FormData = z.infer<typeof schema>;
     const [currentFormValue, setCurrentFormValue] = useState<any>();
 
      const formValue = watch();
-  console.log('formValue', formValue);
-  console.log('currentformValue', currentFormValue);
      const formHasSomeValue = () => {
        return Object.values(formValue).some(value =>  value ? true : false);
      }

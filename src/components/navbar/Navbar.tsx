@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
-import {useState }from 'react';
+import {useRef, useState }from 'react';
 import { useEffect } from 'react';
 import { userLogout} from '../../services/UserService';
 import RoleTypes from '../register/roles-enum';
@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { removeUser } from '../../state/user/userSlice';
 import ProductFilter from '../products/products-filter/ProductsFilter';
 import PriceFilter from '../price-filter/PriceFilter';
+import useOnClickOutside from '../../CustomHooks/useOnClickOutside';
 
 const Navbar = () => {
   const [isUserDropdownExpanded, setIsUserDropdownExpanded] = useState<boolean>(false);
@@ -19,6 +20,7 @@ const Navbar = () => {
   const [isAUserRouteActive, setIsAUserRouteActive,] = useState<boolean>(false);
   const [isACategoryFilterActive, setIsCategoryFilterActive] = useState<boolean>(false);
   const [isAPriceFilterActive, setIsAPriceFilterActive] = useState<boolean>(false);
+  const priceFilterSectionRef = useRef(null);
  
   const [userInfo, setUserInfo] = useState<any>(null);
   const location = useLocation();
@@ -59,6 +61,9 @@ const Navbar = () => {
     setIsCategoryDropdownExpanded(false);
     setIsPriceDropdownExpanded(false);
   }
+
+  useOnClickOutside(priceFilterSectionRef, () => setIsPriceDropdownExpanded(false));
+
     return  <nav className="navbar navbar-expand-md navbar-light bg-light">
         <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">
@@ -93,7 +98,7 @@ const Navbar = () => {
                 setIsCategoryDropdownExpanded(false);
                 setIsUserDropdownExpanded(false);
                 }} className={`nav-link dropdown-toggle ${isAPriceFilterActive ? ' active' : ''}`}>Filtar por rango de precio</a>
-              <div onMouseLeave={() => setIsPriceDropdownExpanded(false)} style={{width: '400px'}} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
+              <div ref={priceFilterSectionRef} style={{width: '400px'}} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
                 <PriceFilter />
                 {/* <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>
