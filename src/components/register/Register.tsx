@@ -15,7 +15,7 @@ const schema = z.object({
     email: z.string().min(1, {message: 'El email requerido.'}),
     password: z.string().min(1, {message: 'La contraseña es requerida.'}),
     confirmPassword: z.string().min(1, {message: 'Por favor confirme la contraseña.'}),
-}).refine(data => data.password === data.confirmPassword, {message: 'Las contraseñas no coinciden.', path: ['confirmPassword']});;
+}).refine(data => data.password === data.confirmPassword, {message: 'Las contraseñas no coinciden.', path: ['confirmPassword']});
 
 type FormData = z.infer<typeof schema>;
 

@@ -98,7 +98,7 @@ const Navbar = () => {
                 setIsCategoryDropdownExpanded(false);
                 setIsUserDropdownExpanded(false);
                 }} className={`nav-link dropdown-toggle ${isAPriceFilterActive ? ' active' : ''}`}>Filtar por rango de precio</a>
-              <div ref={priceFilterSectionRef} style={{width: '400px'}} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
+              <div ref={priceFilterSectionRef} style={{width: '435px'}} className={`dropdown-menu p-2 ${isPriceDropdownExpanded ? ' show not-hover' :''}`}>
                 <PriceFilter />
                 {/* <Link className="dropdown-item clickable" to="/my/orders">Mis Ordenes</Link>
                 { userInfo?.user?.roles?.includes(RoleTypes.ROLE_ADMIN) && <>

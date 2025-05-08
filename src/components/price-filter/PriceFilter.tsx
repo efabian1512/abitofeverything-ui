@@ -15,11 +15,11 @@ const PriceFilter = () => {
     (value) => (!value ? 0 : value),
     z.number().min(0).optional()
   ),           
-});
+}).refine(data => data.from && data.to ? data.from <= data.to : true, {message: 'El valor final en el rango debe ser mayor o igual al valor de inicio.', path: ['to']});
 
 type FormData = z.infer<typeof schema>;
 
-    const { register, handleSubmit, reset, watch, setValue} = useForm<FormData>({resolver: zodResolver(schema) });
+    const { register, handleSubmit, reset, watch, setValue, formState: {errors}} = useForm<FormData>({resolver: zodResolver(schema) });
      const [isThereAPriceFilter, setIsThereAPriceFilter] = useState<boolean>(false);
      const [myParams, setMyParams] = useSearchParams();
     const [currentFormValue, setCurrentFormValue] = useState<any>();
@@ -124,7 +124,9 @@ type FormData = z.infer<typeof schema>;
                              <input {...register('to', {valueAsNumber: true})} className="form-control" id="to" type="number"/>
                         </div>
                       </div>
+
                     </div>
+                     {errors.to && <div className="text-danger mt-2"><span style={{fontSize: '14px'}}>{errors.to?.message}</span></div>}
                     <div className="d-flex gap-1 justify-content-center mt-3">
                              <button disabled={!formHasSomeValue() || isThereAPriceFilter && isThereAnyChange()} style={{width: '10rem'}} type="submit" className="btn btn-primary">Filtrar</button>
                       <button onClick={onResetFilter} disabled={!isThereAPriceFilter} style={{width: '10rem'}}  type="button" className=" btn btn-danger">Deshacer filtro</button>
