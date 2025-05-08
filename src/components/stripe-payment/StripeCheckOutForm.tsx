@@ -3,7 +3,7 @@ import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import './StripeCheckoutForm.css';
 import * as React from "react";
 import Alert from "../alerts/Alert";
-import { StripeError } from "@stripe/stripe-js";
+import { AlertTypes } from "../alerts/alert-types";
 
 const StripeCheckoutForm = () => {
 
@@ -54,7 +54,7 @@ const StripeCheckoutForm = () => {
             <button className="btn btn-primary my-2" id="stripe-form-submit" disabled={isProcessing} type="submit">
                <span id="stripe-form-button-text">{isProcessing ? 'Procesando... ' : 'Realizar pago'}</span> 
             </button>
-          { errorMessage &&  <Alert textCenter={true} type='error' message={errorMessage} /> }
+          { errorMessage &&  <Alert textCenter={true} type={AlertTypes.ERROR} message={errorMessage} /> }
         </form>
     )
 }

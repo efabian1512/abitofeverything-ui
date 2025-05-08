@@ -6,6 +6,8 @@ import { saveUser } from '../../services/UserService';
 import {  useNavigate } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import { useState } from 'react';
+import Alert from '../alerts/Alert';
+import { AlertTypes } from "../alerts/alert-types";
 
 const schema = z.object({
     name: z.string().min(1, {message: 'El nombre es requerido.'}),
@@ -25,17 +27,28 @@ const navigate  = useNavigate();
 
 const [isLoading, setIsloading] = useState<boolean>(false);
 
+const [errorMessage, setErrorMessage] = useState<string>('');
+
  const onSubmit = (data: FieldValues) => {
       const info = {...data, name: data.name + ' ' + data.lastName};
     setIsloading(true);
-      saveUser(info).then(() => {
-        localStorage.setItem('email', data.email);
-        setIsloading(false);
-        reset();
-        navigate('/confirmation-email');
+      saveUser(info).then((resp) => {
+        if(resp.data) {
+          if(resp?.data?.includes('exists')) {
+            setErrorMessage('Este ususario ya ha sido previamnete registrado.');
+            setIsloading(false);
+        } else {
+          localStorage.setItem('email', data.email);
+          setIsloading(false);
+          reset();
+          navigate('/confirmation-email');
+        }
+        }
+        
+       
       }).catch((error) => {
         setIsloading(false);
-        error
+        setErrorMessage(error);
     });
     }
 
@@ -75,6 +88,7 @@ const [isLoading, setIsloading] = useState<boolean>(false);
   </div>
   <button className={`btn btn-primary me-3 ` + registerStyles['create-button']} type='submit'>Crear</button>
   {isLoading && <Loading backDrop={false} wholePage={false}/>}
+  {errorMessage && <Alert message={errorMessage} type={AlertTypes.ERROR}/>}
 </form>
  </div>
 }

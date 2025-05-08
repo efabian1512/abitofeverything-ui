@@ -9,6 +9,8 @@ import loginStyles from './Login.module.css';
 import Alert from '../alerts/Alert';
 import { setUser } from '../../state/user/userSlice';
 import { useDispatch } from 'react-redux';
+import { AlertTypes } from "../alerts/alert-types";
+
 
 const schema = z.object({
     username: z.string().min(1, {message: 'El email requerido.'}),
@@ -78,7 +80,7 @@ const [alertMessage, setAlertMessage] = useState<string>('');
   </div>
 {isLoading && <Loading backDrop={false} wholePage={false}/>}
 <div className="mt-3">
-  {alertMessage && <Alert type="error" message={alertMessage} />}
+  {alertMessage && <Alert type={AlertTypes.ERROR} message={alertMessage} />}
 </div>
 </form>
  </div>

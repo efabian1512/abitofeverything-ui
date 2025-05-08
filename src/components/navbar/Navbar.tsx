@@ -125,11 +125,11 @@ const Navbar = () => {
               </div>
           </li> }
            {!userInfo && <li className="nav-item">
-            <Link className="nav-link clickable" to="/login">Login</Link>
+            <Link className="nav-link clickable" to="/login">Ingresar</Link>
             </li>}
 
              {!userInfo && <li className="nav-item">
-            <Link className="nav-link clickable" to="/register">Register</Link>
+            <Link className="nav-link clickable" to="/register">Registrarse</Link>
             </li>}
         </ul>
       </div>

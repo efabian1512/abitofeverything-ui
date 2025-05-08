@@ -1,5 +1,7 @@
-const Alert = ({ message, type, textCenter }: {message: string, type: 'error' | 'info' | 'warning',  textCenter?: boolean}) => {
-    return <div style={{wordBreak: 'break-word'}} className={`alert ${textCenter ? 'text-center': ''} ${type === 'error' ? 'alert-danger' : type === 'info' ? 'alert-info' : 'alert-warning' }`} role="alert">
+import { AlertTypes } from "./alert-types";
+
+const Alert = ({ message, type, textCenter }: {message: string, type: AlertTypes,  textCenter?: boolean}) => {
+    return <div style={{wordBreak: 'break-word'}} className={`mt-2 alert alert-${type} ${textCenter ? 'text-center': ''}`} role="alert">
        {message}
 </div>
 }

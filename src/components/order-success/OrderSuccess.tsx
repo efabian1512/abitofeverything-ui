@@ -12,6 +12,7 @@ import Alert from '../alerts/Alert';
 import { AxiosError } from 'axios';
 import { removeCheckoutShippingInfo } from '../../state/checkout-shipping-info/CheckoutShippingInfoSlice';
 import Loading from '../Loading/Loading';
+import { AlertTypes } from "../alerts/alert-types";
 
 
 const OrderSuccess = () => {
@@ -87,7 +88,7 @@ const OrderSuccess = () => {
                      </div>
                      </div>}
          {errorMessage && <div className="d-flex flex-column justify-content-center h-100">
-             <Alert textCenter={true} type='error' message={errorMessage} />
+             <Alert textCenter={true} type={AlertTypes.ERROR} message={errorMessage} />
              <Link className="align-self-center text-decoration-none" to="/">Ver mas productos.</Link>
          </div>}
          {isLoading && <Loading/>}

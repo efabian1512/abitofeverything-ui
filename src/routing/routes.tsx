@@ -18,6 +18,7 @@ import LoginRegisterProtectedRoute from '../components/ProtectedRoutes/LoginRegi
 import NoItemsProtectedRoute from "../components/ProtectedRoutes/NoItemsProtectedRoute";
 import OrderDetails from '../components/order-details/OrderDetails';
 import OrderStatusUpdate from '../components/admin/order-status-update/OrderStatusUpdate';
+import UserConfitmation from '../components/user-confirmation/UserConfitmation';
 
 const router = createBrowserRouter([
     {path: '', element: <Layout/>, children: [
@@ -38,7 +39,8 @@ const router = createBrowserRouter([
     {path:'*', element: <Layout/>, children:[{index: true, element: <Home/>}]},
     {path: 'login', element: (<LoginRegisterProtectedRoute><Login/></LoginRegisterProtectedRoute>)},
     {path: 'register', element: (<LoginRegisterProtectedRoute><Register/></LoginRegisterProtectedRoute>)},
-    {path: 'confirmation-email', element: <ConfirmationEmail/>}
+    {path: 'confirmation-email', element: <ConfirmationEmail/>},
+    {path: 'user-confirmation', element: <UserConfitmation/>}
 ]);
 
 export default router;
