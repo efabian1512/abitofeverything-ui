@@ -6,7 +6,7 @@ import { PaypalPaymentRequest } from "../../models/PaypalPaymentRequest";
 import { useState } from "react";
 import Loading from "../Loading/Loading";
 
-const PaypalPayment = ({isShippingFormValid}: {isShippingFormValid: boolean}) => {
+const PaypalPayment = ({isShippingFormValid, isShippingEditionModeActive}: {isShippingFormValid: boolean, isShippingEditionModeActive: boolean}) => {
 
     const cart = useSelector((state: RootState) => state.cartInfo.cart);
     const actualCart = getActualCart(cart);
@@ -34,7 +34,7 @@ const PaypalPayment = ({isShippingFormValid}: {isShippingFormValid: boolean}) =>
     return (<>
         <div className="my-3">
         
-             <button disabled={!isShippingFormValid} onClick={onPay} className="btn btn-primary w-100">Pagar con PayPal</button>
+         <button disabled={!isShippingFormValid || isShippingEditionModeActive} onClick={onPay} className="btn btn-primary w-100">Pagar con PayPal</button>
         
         </div>
            { isLoading &&  <Loading/> }

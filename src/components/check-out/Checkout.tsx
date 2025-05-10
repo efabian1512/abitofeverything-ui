@@ -9,11 +9,11 @@ import {Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { createStripePaymentSession } from './stripeService';
 import { getActualCart } from '../../services/ShoppingCartService';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useReducer, useState, useEffect } from 'react';
 import StripeCheckoutForm from '../stripe-payment/StripeCheckOutForm';
 import { PaymentMethods } from '../../enums/payment-methods';
-import Loading from '../Loading/Loading';
+import { ShippingEditionModeContext, ShippingEditionModeDispatchContext } from '../../contexts/context';
+import { initialShippingEditionState, shippingEditionModeReducer } from './shipping-edition-mode-reducer';
 
 
 
@@ -23,6 +23,7 @@ const Checkout = () => {
     const [clientSecret, setClientSecret] = useState<string>();
     const cart = useSelector((state: RootState) => state.cartInfo.cart);
     const actualCart = getActualCart(cart);
+    const [isShippingEditionModeActive, dispatch] = useReducer(shippingEditionModeReducer, initialShippingEditionState);
 
     const [paymentMethod, setPaymentMethod] = useState<string>('');
   
@@ -43,34 +44,38 @@ const Checkout = () => {
     }
 
     return <div className="row pb-5">
-         <h2 className="mb-5">Informacion de envio</h2>
-        <div className="col-md-6 col-sm-6 col-lg-6">
-          <ShippingInfoSection />
+         <h2 className="mb-5">Información de envío</h2>
+        <div className="col-md-6 col-sm-6 col-lg-6 mb-3">
+           <ShippingEditionModeContext.Provider value={isShippingEditionModeActive}>
+               <ShippingEditionModeDispatchContext.Provider value={dispatch}>
+                       <ShippingInfoSection />
+               </ShippingEditionModeDispatchContext.Provider>
+               </ShippingEditionModeContext.Provider> 
+       
         </div>
         <div className="col-md-6 col-sm-6 col-lg-6">
 
             <ShoppingCartSummary/>
-            <div>
+                       <div>
                 <p className="fw-bold mb-3 mt-3">Metodo de Pago</p>
                 <div className="form-check">
-                    <input disabled={!shippingInfo ? true : false} onChange={onPaymentMethodChange} className="form-check-input" type="radio" name="paymentMethod" id="paypalMethod" value="paypal"/>
+                    <input disabled={!shippingInfo ? true : false || isShippingEditionModeActive} onChange={onPaymentMethodChange} className="form-check-input" type="radio" name="paymentMethod" id="paypalMethod" value="paypal"/>
                     <label className="form-check-label" htmlFor="paypalMethod">
                         PayPal
                     </label>
-                   { paymentMethod === PaymentMethods.PAYPAL && <PaypalPayment isShippingFormValid={shippingInfo ? true : false} /> }
+                   { paymentMethod === PaymentMethods.PAYPAL && <PaypalPayment isShippingFormValid={shippingInfo ? true : false} isShippingEditionModeActive={isShippingEditionModeActive} /> }
                    {/* <PayPal/> */}
                 </div>
                     <div className="form-check">
-                        <input disabled={!shippingInfo ? true : false}  onChange={onPaymentMethodChange}  className="form-check-input" type="radio" name="paymentMethod" id="cardMethod" value="card"/>
+                        <input disabled={!shippingInfo ? true : false || isShippingEditionModeActive}  onChange={onPaymentMethodChange}  className="form-check-input" type="radio" name="paymentMethod" id="cardMethod" value="card"/>
                         <label className="form-check-label" htmlFor="cardMethod">
                         Tarjeta de Credito o Debito
                         </label>
                          { paymentMethod === PaymentMethods.CARD && stripePromise && clientSecret && <Elements stripe={stripePromise} options={{clientSecret}}>
-                            <StripeCheckoutForm />
+                            <StripeCheckoutForm isShippingEditionModeActive={isShippingEditionModeActive}  />
                         </Elements>}
                     </div>
             </div>
-            
         </div>         
     </div>
 }

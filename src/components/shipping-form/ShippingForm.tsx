@@ -1,14 +1,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldValues, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { Controller, FieldValues, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 import { useCountries } from "../../CustomHooks/useCountries";
-import { AppDispatch } from "../../state/store";
+import { AppDispatch, RootState } from "../../state/store";
 import { setCountryFirst, sortCountries } from "../../Utilities";
 import { setCheckoutShippingInfo } from '../../state/checkout-shipping-info/CheckoutShippingInfoSlice';
 import { ShippingInfo } from "../../models/ShippingInfo";
 import Loading from "../Loading/Loading";
+import { useContext, useEffect, useState } from "react";
+import { ShippingEditionModeContext, ShippingEditionModeDispatchContext } from "../../contexts/context";
 
 const ShippingForm = () => {
 
@@ -20,18 +22,26 @@ const ShippingForm = () => {
         city: z.string().min(1, {message: 'Se requiere una ciudad.'}),
         state: z.string().min(1, {message: 'Se requiere un estado o provincia.'}),
         zipCode: z.string().min(1, {message: 'Se requiere una codigo postal.'}),
-        phoneNumber: z.string().min(1, {message: 'Se requiere un numero de telefono.'})
+        // phoneNumber: z.string().min(1, {message: 'Se requiere un numero de telefono.'})
                   
     });
 
     type FormData = z.infer<typeof schema>;
 
-    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({resolver: zodResolver(schema) });
+    const { register, handleSubmit, watch, formState: { errors }, setValue, control } = useForm<FormData>({resolver: zodResolver(schema) });
+    const isShippingEditionModeActive = useContext(ShippingEditionModeContext);
+    const shippingInfo = useSelector((state: RootState) => state.checkOutShippingInfo.shippingInfo);
+      
     const dispatch = useDispatch<AppDispatch>();
+    const shippingEdditionModeDispatch = useContext(ShippingEditionModeDispatchContext);
 
     const { data: countries, isLoading } = useCountries();
+
+    const [currentFormValue, setCurrentFormValue] = useState<any>();
     
     const sortedCountries = setCountryFirst(countries?.sort(sortCountries)!, 'DOM');
+
+    const [phoneInputValue, setPhoneInputValue] = useState('');
 
 
     // useEffect(() => {
@@ -47,11 +57,83 @@ const ShippingForm = () => {
     //     }
     // },[countries]);
 
- 
+    const formValue = watch();
 
+     const isThereAnyChange = () => {
+       let isThereAnyChangeLocal = false;
+       const formValueLocal = {...formValue};
+       const currentFormValueLocal = {...currentFormValue};
+
+       if(formValue && currentFormValue) {
+        isThereAnyChangeLocal = Object.keys(currentFormValueLocal).every(key => {
+         return formValueLocal[key as keyof typeof formValueLocal] === currentFormValueLocal[key]
+        });
+       }
+        return isThereAnyChangeLocal;
+     }
+
+    const setFormValues = () => {
+        setValue('addressLine1', shippingInfo?.addressLine1 ? shippingInfo?.addressLine1: '' );
+        setValue('addressLine2', shippingInfo?.addressLine2 ? shippingInfo?.addressLine2: '' );
+        setValue('city', shippingInfo?.city ? shippingInfo?.city: '' );
+        setValue('country', shippingInfo?.country ? shippingInfo?.country: '' );
+        setValue('customerName', shippingInfo?.customerName ? shippingInfo?.customerName: '' );
+        setPhoneInputValue( formatPhoneNumber(shippingInfo?.phoneNumber ? shippingInfo?.phoneNumber: '' ));
+        setValue('state', shippingInfo?.state ? shippingInfo?.state: '' );
+        setValue('zipCode', shippingInfo?.zipCode ? shippingInfo?.zipCode : '' );
+
+        const currentFormLocal: ShippingInfo = {
+            customerName: shippingInfo?.customerName ? shippingInfo?.customerName: '',
+            addressLine1: shippingInfo?.addressLine1 ? shippingInfo?.addressLine1: '',
+            addressLine2: shippingInfo?.addressLine2 ? shippingInfo?.addressLine2: '' ,
+            city: shippingInfo?.city ? shippingInfo?.city: '',
+            country: shippingInfo?.country ? shippingInfo?.country: '',
+            phoneNumber: shippingInfo?.phoneNumber ? shippingInfo?.phoneNumber: '',
+            state: shippingInfo?.state ? shippingInfo?.state: '',
+            zipCode: shippingInfo?.zipCode ? shippingInfo?.zipCode : ''
+        }
+
+        setCurrentFormValue(currentFormLocal);
+    }
+
+    useEffect(() => {
+        if(isShippingEditionModeActive && shippingInfo && countries) {
+            setFormValues();
+        }
+    },[countries])
+
+      const reversePhoneNumber = (formattedNumber: string): string => {
+        if(!formattedNumber) return formattedNumber;
+
+       return formattedNumber.replace(/\D/g, '');
+    }
+    
     const onSave = (data: FieldValues) => {
-          console.log(data);
-          dispatch(setCheckoutShippingInfo(data as ShippingInfo));
+        const formValue = {...data, phoneNumber: reversePhoneNumber(phoneInputValue)}
+          dispatch(setCheckoutShippingInfo(formValue as ShippingInfo));
+          if(isShippingEditionModeActive) {
+             turnEditionModeOff();
+          }
+    }
+
+    const turnEditionModeOff = () => {
+         shippingEdditionModeDispatch({type: 'off'});
+    }
+
+    const formatPhoneNumber = (inputValue: string) => {
+        if(!inputValue) return inputValue;
+        const phoneNumber = inputValue.replace(/[^\d]/g,'');
+        const phoneNumberLength = phoneNumber.length;
+        if(phoneNumberLength < 4) return phoneNumber;
+        if(phoneNumberLength < 7) {
+            return `(${phoneNumber.slice(0,3)}) ${phoneNumber.slice(3)}`;
+        }
+        return `(${phoneNumber.slice(0,3)}) ${phoneNumber.slice(3,6)}-${phoneNumber.slice(6,10)}`
+    }
+
+    const handlePhoneNumberInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const formattedPhoneNumber = formatPhoneNumber(event.target.value);
+        setPhoneInputValue(formattedPhoneNumber);
     }
 
  return  <form className="h-100" action={handleSubmit(onSave)}>
@@ -108,16 +190,20 @@ const ShippingForm = () => {
                     </div> }
                 </div>
                  <div className="form-gropup mb-2">
-                    <label htmlFor="phoneNumber">Numero de Telefono</label>
+                    <label htmlFor="phon eNumber">Numero de Telefono</label>
                     <div className="input-group mb-3">
                     <span className="input-group-text"><i className="bi bi-telephone"></i></span>
-                    <input {...register('phoneNumber')} type="text" id="phoneNumber" className="form-control"/>
+                    <input value={phoneInputValue} onChange={(event) => handlePhoneNumberInputChange(event)} name="phoneNumber" id="phoneNumber" type="text" className="form-control"/> 
+                    {/* <input onChange={(event) => handlePhoneInputChange(event)} type="text" id="phoneNumber" className="form-control"/> */}
                     </div>
-                   { errors.phoneNumber && <div className="alert alert-danger mt-2">
+                   {/* { errors.phoneNumber && <div className="alert alert-danger mt-2">
                         <div> {errors.phoneNumber?.message}</div>
-                    </div> }
+                    </div> } */}
                 </div>
-                  <button className="btn btn-primary" type="submit">Guardar</button>
+                  <div className="d-flex gap-2">
+                      <button style={{width: '7rem'}} disabled={isShippingEditionModeActive && isThereAnyChange()} className="btn btn-primary" type="submit">{`${isShippingEditionModeActive ? 'Actualizar' : 'Guardar'}`}</button>
+                      <button style={{width: '7rem'}}  onClick={turnEditionModeOff} className="btn btn-secondary">Cancelar</button>
+                  </div>
                   {isLoading && <Loading />}
                      </form>
 }

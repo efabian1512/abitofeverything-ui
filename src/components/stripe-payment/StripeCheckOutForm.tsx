@@ -5,7 +5,7 @@ import * as React from "react";
 import Alert from "../alerts/Alert";
 import { AlertTypes } from "../alerts/alert-types";
 
-const StripeCheckoutForm = () => {
+const StripeCheckoutForm = ( {isShippingEditionModeActive} :{isShippingEditionModeActive: boolean} ) => {
 
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | undefined>('');
@@ -50,11 +50,12 @@ const StripeCheckoutForm = () => {
 
     return (
         <form className="stripe-shop-form mt-3" onSubmit={handleSubmit} id="stripe-form">
+
             <PaymentElement/>
-            <button className="btn btn-primary my-2" id="stripe-form-submit" disabled={isProcessing} type="submit">
-               <span id="stripe-form-button-text">{isProcessing ? 'Procesando... ' : 'Realizar pago'}</span> 
-            </button>
-          { errorMessage &&  <Alert textCenter={true} type={AlertTypes.ERROR} message={errorMessage} /> }
+                <button className="btn btn-primary my-2" id="stripe-form-submit" disabled={isProcessing || isShippingEditionModeActive} type="submit">
+                   <span id="stripe-form-button-text">{isProcessing ? 'Procesando... ' : 'Realizar pago'}</span>
+                </button>
+              { errorMessage &&  <Alert textCenter={true} type={AlertTypes.ERROR} message={errorMessage} /> }
         </form>
     )
 }
