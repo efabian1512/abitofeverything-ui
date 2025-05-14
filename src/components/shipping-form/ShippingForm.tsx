@@ -93,7 +93,7 @@ const ShippingForm = () => {
         }
     },[countries])
 
-      const reversePhoneNumber = (formattedNumber: string): string => {
+      const reversePhoneNumber = (formattedNumber: string | undefined): string | undefined => {
         if(!formattedNumber) return formattedNumber;
 
        return formattedNumber.replace(/\D/g, '');
@@ -127,18 +127,18 @@ const ShippingForm = () => {
     const handlePhoneNumberInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const formattedPhoneNumber = formatPhoneNumber(event.target.value);
         setPhoneInputValue(formattedPhoneNumber);
-        checkPhoneNumberInputErrors(event.target.value);
+        checkPhoneNumberInputErrors(false, event.target.value);
     }
 
-    const validatePhoneNumberInput = (phoneInputValueLocal: string) => {
+    const validatePhoneNumberInput = (phoneInputValueLocal: string | undefined) => {
         const actualPhoneNumber = reversePhoneNumber(phoneInputValueLocal);
         const message = !actualPhoneNumber? 'Se requiere un numero de telefono.' :
-        actualPhoneNumber.length < 10 || actualPhoneNumber.length > 10  ? 'El  numero de telefono debe ser de 10 digitos': '';
+        actualPhoneNumber.length < 10 || actualPhoneNumber.length > 10 ? 'El  numero de telefono debe ser de 10 digitos': '';
         setPhoneNumberInputErrorMessage(message);
     }
 
-    const checkPhoneNumberInputErrors = (phoneInputValueLocal?: string) => {
-        const actualPhoneInputValue = phoneInputValueLocal || reversePhoneNumber(phoneInputValue);
+    const checkPhoneNumberInputErrors = (comingFromSubmition?: boolean, phoneInputValueLocal?: string ) => {
+        const actualPhoneInputValue = comingFromSubmition ? phoneInputValueLocal || reversePhoneNumber(phoneInputValue) : phoneInputValueLocal;
        validatePhoneNumberInput(actualPhoneInputValue);
     }
 
@@ -210,7 +210,7 @@ const ShippingForm = () => {
                     </div> } */}
                 </div>
                   <div className="d-flex gap-2">
-                      <button onClick={() => checkPhoneNumberInputErrors()} style={{width: '7rem'}} disabled={isShippingEditionModeActive && isThereAnyChange()} className="btn btn-primary" type="submit">{`${isShippingEditionModeActive ? 'Actualizar' : 'Guardar'}`}</button>
+                      <button onClick={() => checkPhoneNumberInputErrors(true)} style={{width: '7rem'}} disabled={isShippingEditionModeActive && isThereAnyChange()} className="btn btn-primary" type="submit">{`${isShippingEditionModeActive ? 'Actualizar' : 'Guardar'}`}</button>
                      { isShippingEditionModeActive && <button type="button" style={{width: '7rem'}}  onClick={turnEditionModeOff} className="btn btn-secondary">Cancelar</button> }
                   </div>
                   {isLoading && <Loading />}
