@@ -28,7 +28,7 @@ const ShippingForm = () => {
 
     type FormData = z.infer<typeof schema>;
 
-    const { register, handleSubmit, watch, formState: { errors }, setValue, control } = useForm<FormData>({resolver: zodResolver(schema) });
+    const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<FormData>({resolver: zodResolver(schema) });
     const isShippingEditionModeActive = useContext(ShippingEditionModeContext);
     const shippingInfo = useSelector((state: RootState) => state.checkOutShippingInfo.shippingInfo);
       
@@ -42,23 +42,11 @@ const ShippingForm = () => {
     const sortedCountries = setCountryFirst(countries?.sort(sortCountries)!, 'DOM');
 
     const [phoneInputValue, setPhoneInputValue] = useState('');
+    const [currentPhoneInputValue, setCurrentPhoneInputValue] = useState('');
 
-
-    // useEffect(() => {
-    //     if(shippingInfo) {
-    //         setValue('addressLine1', shippingInfo.addressLine1);
-    //         setValue('addressLine2', shippingInfo.addressLine2);
-    //         setValue('city', shippingInfo.city);
-    //         setValue('country', shippingInfo.country);
-    //         setValue('customerName', shippingInfo.customerName);
-    //         setValue('phoneNumber', shippingInfo.phoneNumber);
-    //         setValue('zipCode', shippingInfo.zipCode);
-    //         setValue('state', shippingInfo.state);
-    //     }
-    // },[countries]);
+    const [phoneNumberInputErrorMessage, setPhoneNumberInputErrorMessage] = useState<string | null>(null);
 
     const formValue = watch();
-
      const isThereAnyChange = () => {
        let isThereAnyChangeLocal = false;
        const formValueLocal = {...formValue};
@@ -69,7 +57,7 @@ const ShippingForm = () => {
          return formValueLocal[key as keyof typeof formValueLocal] === currentFormValueLocal[key]
         });
        }
-        return isThereAnyChangeLocal;
+        return isThereAnyChangeLocal && currentPhoneInputValue === reversePhoneNumber(phoneInputValue);
      }
 
     const setFormValues = () => {
@@ -78,22 +66,25 @@ const ShippingForm = () => {
         setValue('city', shippingInfo?.city ? shippingInfo?.city: '' );
         setValue('country', shippingInfo?.country ? shippingInfo?.country: '' );
         setValue('customerName', shippingInfo?.customerName ? shippingInfo?.customerName: '' );
-        setPhoneInputValue( formatPhoneNumber(shippingInfo?.phoneNumber ? shippingInfo?.phoneNumber: '' ));
+        if(!phoneNumberInputErrorMessage) {
+            setPhoneInputValue( formatPhoneNumber(shippingInfo?.phoneNumber ? shippingInfo?.phoneNumber: '' ));
+        }
         setValue('state', shippingInfo?.state ? shippingInfo?.state: '' );
         setValue('zipCode', shippingInfo?.zipCode ? shippingInfo?.zipCode : '' );
 
-        const currentFormLocal: ShippingInfo = {
+        const currentFormLocal = {
             customerName: shippingInfo?.customerName ? shippingInfo?.customerName: '',
             addressLine1: shippingInfo?.addressLine1 ? shippingInfo?.addressLine1: '',
             addressLine2: shippingInfo?.addressLine2 ? shippingInfo?.addressLine2: '' ,
             city: shippingInfo?.city ? shippingInfo?.city: '',
             country: shippingInfo?.country ? shippingInfo?.country: '',
-            phoneNumber: shippingInfo?.phoneNumber ? shippingInfo?.phoneNumber: '',
             state: shippingInfo?.state ? shippingInfo?.state: '',
             zipCode: shippingInfo?.zipCode ? shippingInfo?.zipCode : ''
         }
 
         setCurrentFormValue(currentFormLocal);
+        setCurrentPhoneInputValue(shippingInfo?.phoneNumber ? shippingInfo?.phoneNumber: '' );
+
     }
 
     useEffect(() => {
@@ -107,8 +98,10 @@ const ShippingForm = () => {
 
        return formattedNumber.replace(/\D/g, '');
     }
-    
+
     const onSave = (data: FieldValues) => {
+        if(phoneNumberInputErrorMessage)  return;
+
         const formValue = {...data, phoneNumber: reversePhoneNumber(phoneInputValue)}
           dispatch(setCheckoutShippingInfo(formValue as ShippingInfo));
           if(isShippingEditionModeActive) {
@@ -134,9 +127,22 @@ const ShippingForm = () => {
     const handlePhoneNumberInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const formattedPhoneNumber = formatPhoneNumber(event.target.value);
         setPhoneInputValue(formattedPhoneNumber);
+        checkPhoneNumberInputErrors(event.target.value);
     }
 
- return  <form className="h-100" action={handleSubmit(onSave)}>
+    const validatePhoneNumberInput = (phoneInputValueLocal: string) => {
+        const actualPhoneNumber = reversePhoneNumber(phoneInputValueLocal);
+        const message = !actualPhoneNumber? 'Se requiere un numero de telefono.' :
+        actualPhoneNumber.length < 10 || actualPhoneNumber.length > 10  ? 'El  numero de telefono debe ser de 10 digitos': '';
+        setPhoneNumberInputErrorMessage(message);
+    }
+
+    const checkPhoneNumberInputErrors = (phoneInputValueLocal?: string) => {
+        const actualPhoneInputValue = phoneInputValueLocal || reversePhoneNumber(phoneInputValue);
+       validatePhoneNumberInput(actualPhoneInputValue);
+    }
+
+ return  <form className="h-100" onSubmit={handleSubmit(onSave)}>
                 <div className="form-gropup mb-2">
                     <label htmlFor="customerName">Nombre Completo</label>
                     <input {...register('customerName')} type="text" id="customerName" className="form-control"/>
@@ -190,19 +196,22 @@ const ShippingForm = () => {
                     </div> }
                 </div>
                  <div className="form-gropup mb-2">
-                    <label htmlFor="phon eNumber">Numero de Telefono</label>
+                    <label htmlFor="phoneNumber">Numero de Telefono</label>
                     <div className="input-group mb-3">
                     <span className="input-group-text"><i className="bi bi-telephone"></i></span>
                     <input value={phoneInputValue} onChange={(event) => handlePhoneNumberInputChange(event)} name="phoneNumber" id="phoneNumber" type="text" className="form-control"/> 
                     {/* <input onChange={(event) => handlePhoneInputChange(event)} type="text" id="phoneNumber" className="form-control"/> */}
                     </div>
+                      { phoneNumberInputErrorMessage && <div  className="alert alert-danger mt-2">
+                        <div>{phoneNumberInputErrorMessage}</div>
+                    </div>}
                    {/* { errors.phoneNumber && <div className="alert alert-danger mt-2">
                         <div> {errors.phoneNumber?.message}</div>
                     </div> } */}
                 </div>
                   <div className="d-flex gap-2">
-                      <button style={{width: '7rem'}} disabled={isShippingEditionModeActive && isThereAnyChange()} className="btn btn-primary" type="submit">{`${isShippingEditionModeActive ? 'Actualizar' : 'Guardar'}`}</button>
-                      <button style={{width: '7rem'}}  onClick={turnEditionModeOff} className="btn btn-secondary">Cancelar</button>
+                      <button onClick={() => checkPhoneNumberInputErrors()} style={{width: '7rem'}} disabled={isShippingEditionModeActive && isThereAnyChange()} className="btn btn-primary" type="submit">{`${isShippingEditionModeActive ? 'Actualizar' : 'Guardar'}`}</button>
+                     { isShippingEditionModeActive && <button type="button" style={{width: '7rem'}}  onClick={turnEditionModeOff} className="btn btn-secondary">Cancelar</button> }
                   </div>
                   {isLoading && <Loading />}
                      </form>
